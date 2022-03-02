@@ -6,15 +6,15 @@ from .log import log
 class TangBotController:
 
     # properties
-    usb : serial.Serial = None
-    cmd = None
-    TARGET_CENTER:int = 5896
-    WAIST_VAL:int = TARGET_CENTER
-    HEAD_TILT_VAL:int = TARGET_CENTER  # This is the up/down value
-    HEAD_TURN_VAL:int = TARGET_CENTER  # This is the left/right value
-    LEFT_MOTOR:int = 0  # This is the current speed of the motor
-    RIGHT_MOTOR:int = 0  # This is the current speed of the motor
-    SPEED:int = 200  # This is the current update to the motor
+    usb:serial.Serial   = None
+    cmd                 = None
+    TARGET_CENTER:int   = 5896
+    WAIST_VAL:int       = TARGET_CENTER
+    HEAD_TILT_VAL:int   = TARGET_CENTER     # This is the up/down value
+    HEAD_TURN_VAL:int   = TARGET_CENTER     # This is the left/right value
+    LEFT_MOTOR:int      = 0                 # This is the current speed of the motor
+    RIGHT_MOTOR:int     = 0                 # This is the current speed of the motor
+    SPEED:int           = 200               # This is the current update to the motor
 
     # constructor
     def __init__(self):
