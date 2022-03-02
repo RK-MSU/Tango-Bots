@@ -1,14 +1,17 @@
 # key_bindings.py
 
 import tkinter as tk
+from tango_bot import TangBotController
 
 class KeyBindings:
 
     # properties
     win : tk.Tk = None
+    bot: TangBotController = None
 
     # constructor
-    def __init__(self):
+    def __init__(self, bot:TangBotController):
+        self.bot = bot
         self.win = tk.Tk()
         # setup keybindings
         self.win.bind('<Up>', self.arrows)   # key code: 111
