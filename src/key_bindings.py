@@ -1,7 +1,7 @@
 # key_bindings.py
 
 import tkinter as tk
-from tango_bot import TangBotController
+from .tango_bot import TangBotController
 
 class KeyBindings:
 
