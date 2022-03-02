@@ -9,6 +9,11 @@ class TangBotController:
     usb : serial.Serial = None
     cmd = None
     WAIST_VAL = 5896
+    HEAD_TILT_VAL = 5896  # This is the up/down value
+    HEAD_TURN_VAL = 6000  # This is the left/right value
+    LEFT_MOTOR = 0  # This is the current speed of the motor
+    RIGHT_MOTOR = 0  # This is the current speed of the motor
+    SPEED = 200  # This is the current update to the motor
 
     # constructor
     def __init__(self):
@@ -30,9 +35,29 @@ class TangBotController:
             self.usb.write(command)
         else:
             log.critical('Unable to write to USB - USB not connected')
-    
+
     def moveWaistLeft(self):
-        self.WAIST_VAL += 200
+        self.WAIST_VAL += self.SPEED
+        # TODO: write update to USB
+
+    def moveWaistRight(self):
+        self.WAIST_VAL -= self.SPEED
+        # TODO: write update to USB
+
+    def moveHeadUp(self):
+        self.HEAD_TILT_VAL += self.SPEED  # Check that this moves up not down
+        # TODO: write update to USB
+
+    def moveHeadDown(self):
+        self.HEAD_TILT_VAL -= self.SPEED  # Check that this moves down not up
+        # TODO: write update to USB
+
+    def moveHeadLeft(self):
+        self.HEAD_TURN_VAL += self.SPEED  # Check that this moves left not right
+        # TODO: write update to USB
+
+    def moveHeadRight(self):
+        self.HEAD_TURN_VAL -= self.SPEED  # Check that this moves right not left
         # TODO: write update to USB
 
 # END
