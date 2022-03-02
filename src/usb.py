@@ -1,6 +1,7 @@
 # usb.py
 
 import serial
+from .log import log
 
 def getUSB():
     usb = None
@@ -8,19 +9,19 @@ def getUSB():
     try:
         usb = serial.Serial(usb_name)
     except:
-        print('Unable to get USD: {!s}'.format(usb_name))
+        log.debug('Unable to get USD: %s', usb_name)
         usb = None
     if usb is None:
         usb_name = '/dev/ttyACM1'
         try:
             usb = serial.Serial(usb_name)
         except:
-            print('Unable to get USD: {!s}'.format(usb_name))
+            log.debug('Unable to get USD: %s', usb_name)
             usb = None
     if usb is not None:
-        print('USB:\n- name: "{!s}"\n- baudrate: "{!s}"'.format(usb.name, usb.baudrate))
+        log.info('USB:\n- name: "%s"\n- baudrate: "%s"', usb.name, usb.baudrate)
     else:
-        print('ERROR: Unable to get USB Serial')
+        log.critical('Unable to get USB Serial')
     # return usb (serial)
     return usb
 
