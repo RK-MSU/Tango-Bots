@@ -29,8 +29,6 @@ class KeyBindings:
         self.win.bind('<1>', self.speed)        # key code: 49
         self.win.bind('<2>', self.speed)        # key code: 50
         self.win.bind('<3>', self.speed)        # key code: 51
-        # start tkinter window
-        self.win.mainloop()
 
     def arrows(self, event=None):
         keycode = event.keycode
@@ -80,6 +78,10 @@ class KeyBindings:
         if keycode == 49:
             log.debug('Key Pressed: "%s"', '<3>')
             self.bot.SPEED = 100
+
+    # start tkinter window
+    def start(self):
+        self.win.mainloop()
 
     def stop(self, event=None):
         self.win.destroy()
