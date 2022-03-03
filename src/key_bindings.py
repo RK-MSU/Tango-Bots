@@ -28,9 +28,9 @@ class KeyBindings:
         self.win.bind('<z>', self.waist)        # key code: 52
         self.win.bind('<c>', self.waist)        # key code: 54
         self.win.bind('<m>', self.speed)        # key code: 74
-        self.win.bind('<,>', self.speed)        # key code: 75
-        self.win.bind('<.>', self.speed)        # key code: 76
-        self.win.bind('</>', self.speed)        # key code: 77
+        self.win.bind('<j>', self.speed)        # key code: 75
+        self.win.bind('<k>', self.speed)        # key code: 76
+        self.win.bind('<l>', self.speed)        # key code: 77
 
         def run(win:tk.Tk):
             try:
