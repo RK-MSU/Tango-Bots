@@ -35,6 +35,8 @@ class TangBotController:
     # constructor
     def __init__(self):
         self.usb = getUSB()
+        if self.usb is not None:
+            self.usb.write_timeout = 1
         self.running = True
         self.lock = threading.Lock()
         # Exit Safe Start
