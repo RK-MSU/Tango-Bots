@@ -95,7 +95,7 @@ class TangBotController:
         self.writeCmd(BotServos.HeadPan.value, self.HEAD_TURN_VAL)
 
     def increaseWheelSpeed(self):
-        self.WHEEL_SPEED += self.SPEED
+        self.WHEEL_SPEED -= self.SPEED
         # make sure wheel speed does no exceed the upper limit
         if self.WHEEL_SPEED > self.SPEED_CEILING:
             # set wheel speed to upper limit for wheels
@@ -104,7 +104,7 @@ class TangBotController:
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
 
     def decreaseWheelSpeed(self):
-        self.WHEEL_SPEED -= self.SPEED
+        self.WHEEL_SPEED += self.SPEED
         # make sure wheel speed does no exceed the lower limit
         if self.WHEEL_SPEED < self.SPEED_FLOOR:
             # set wheel speed to lower limit for wheels
