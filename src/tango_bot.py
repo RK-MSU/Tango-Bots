@@ -64,4 +64,20 @@ class TangBotController:
         self.HEAD_TURN_VAL -= self.SPEED  # Check that this moves right not left
         # TODO: write update to USB
 
+    def increaseWheelSpeed(self):
+        self.WHEEL_SPEED += self.SPEED
+        # make sure wheel speed does no exceed the upper limit
+        if self.WHEEL_SPEED > self.SPEED_CEILING:
+            # set wheel speed to upper limit for wheels
+            self.WHEEL_SPEED = self.SPEED_CEILING
+        # TODO: write update to USB - left AND right wheels
+
+    def decreaseWheelSpeed(self):
+        self.WHEEL_SPEED -= self.SPEED
+        # make sure wheel speed does no exceed the lower limit
+        if self.WHEEL_SPEED < self.SPEED_FLOOR:
+            # set wheel speed to lower limit for wheels
+            self.WHEEL_SPEED = self.SPEED_FLOOR
+        # TODO: write update to USB - left AND right wheels
+
 # END
