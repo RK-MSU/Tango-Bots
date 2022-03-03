@@ -30,6 +30,7 @@ class KeyBindings:
         self.win.bind('<1>', self.speed)        # key code: 49
         self.win.bind('<2>', self.speed)        # key code: 50
         self.win.bind('<3>', self.speed)        # key code: 51
+        self.win.bind('<0>', self.speed)        # key code: 48
 
         def run(win:tk.Tk):
             try:
@@ -96,5 +97,9 @@ class KeyBindings:
         if keycode == 49:
             log.debug('Key Pressed: "%s"', '<3>')
             self.bot.SPEED = 100
+        if keycode == 48:
+            log.debug('Key Pressed: "%s"', '<0>')
+            self.bot.WHEEL_SPEED = self.bot.SPEED_START
+
 
 # END

@@ -28,6 +28,7 @@ class TangBotController:
     SPEED:int           = 200               # This is the current update to the motor
     SPEED_CEILING:int   = 7500              # Upper limit for wheel speed
     SPEED_FLOOR:int     = 4500              # Lower limit for wheel speed
+    SPEED_START:int     = 6000              # No Motor Movement ????
 
     running:bool        = None
     lock:threading.Lock = None
@@ -36,7 +37,7 @@ class TangBotController:
     def __init__(self):
         self.usb = getUSB()
         if self.usb is not None:
-            self.usb.write_timeout = 1
+            self.usb.write_timeout = 1 # TEST THIS
         self.running = True
         self.lock = threading.Lock()
         # Exit Safe Start
@@ -48,7 +49,8 @@ class TangBotController:
     # Stop the robot
     def stop(self):
         self.running = False
-        # TODO: write to usb to stop wheels
+        self.writeCmd(BotServos.RightWheel.value, 0)
+        self.writeCmd(BotServos.LeftWheel.value, 0)
 
     # write out command to usb
     def writeCmd(self, chr_val, target:int=TARGET_CENTER):
@@ -109,10 +111,11 @@ class TangBotController:
         if self.WHEEL_SPEED < self.SPEED_FLOOR:
             # set wheel speed to lower limit for wheels
             self.WHEEL_SPEED = self.SPEED_FLOOR
-        # TODO: write update to USB - left AND right wheels
+        self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
+        self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
 
     def increaseRightWheelSpeed(self):
-        self.WHEEL_SPEED += self.SPEED
+        self.WHEEL_SPEED -= self.SPEED
         # make sure wheel speed does no exceed the upper limit
         if self.WHEEL_SPEED > self.SPEED_CEILING:
             # set wheel speed to upper limit for wheels
@@ -120,7 +123,7 @@ class TangBotController:
         # TODO: write update to USB - left AND right wheels
 
     def decreaseLeftWheelSpeed(self):
-        self.WHEEL_SPEED -= self.SPEED
+        self.WHEEL_SPEED += self.SPEED
         # make sure wheel speed does no exceed the lower limit
         if self.WHEEL_SPEED < self.SPEED_FLOOR:
             # set wheel speed to lower limit for wheels
