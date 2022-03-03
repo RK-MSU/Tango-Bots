@@ -64,43 +64,31 @@ class TangBotController:
         else:
             log.critical('Unable to write to USB - USB not connected')
 
-    # TODO: Check that this moves left not right
-    # TODO: Check that BotServos.Waist.value is the correct value
     def moveWaistLeft(self):
         self.WAIST_VAL += self.SPEED
         log.debug('Move Waist Left - Value: "%s"', self.WAIST_VAL)
         self.writeCmd(BotServos.Waist.value, self.WAIST_VAL)
 
-    # TODO: Check that this moves right not left
-    # TODO: Check that BotServos.Waist.value is the correct value
     def moveWaistRight(self):
         self.WAIST_VAL -= self.SPEED
         log.debug('Move Waist Right - Value: "%s"', self.WAIST_VAL)
         self.writeCmd(BotServos.Waist.value, self.WAIST_VAL)
 
-    # TODO: Check that this moves up not down
-    # TODO: Check that BotServos.HeadTilt is the correct value
     def moveHeadUp(self):
         self.HEAD_TILT_VAL += self.SPEED
         log.debug('Move Head Up - Value: "%s"', self.HEAD_TILT_VAL)
         self.writeCmd(BotServos.HeadTilt.value, self.HEAD_TILT_VAL)
 
-    # TODO: Check that this moves down not up
-    # TODO: Check that BotServos.HeadTilt is the correct value
     def moveHeadDown(self):
         self.HEAD_TILT_VAL -= self.SPEED
         log.debug('Move Head Down - Value: "%s"', self.HEAD_TILT_VAL)
         self.writeCmd(BotServos.HeadTilt.value, self.HEAD_TILT_VAL)
 
-    # TODO: Check that this moves left not right
-    # TODO: Check that BotServos.HeadPan.value is the correct value
     def moveHeadLeft(self):
         self.HEAD_TURN_VAL += self.SPEED
         log.debug('Move Head Left - Value: "%s"', self.HEAD_TURN_VAL)
         self.writeCmd(BotServos.HeadPan.value, self.HEAD_TURN_VAL)
 
-    # TODO: Check that this moves right not left
-    # TODO: Check that BotServos.HeadPan.value is the correct value
     def moveHeadRight(self):
         self.HEAD_TURN_VAL -= self.SPEED
         log.debug('Move Head Right - Value: "%s"', self.HEAD_TURN_VAL)
