@@ -27,9 +27,9 @@ class KeyBindings:
         self.win.bind('<d>', self.head)         # key code: 40
         self.win.bind('<z>', self.waist)        # key code: 52
         self.win.bind('<c>', self.waist)        # key code: 54
-        self.win.bind('<m>', self.speed)        # key code: 188
-        self.win.bind('<,>', self.speed)        # key code: 190
-        self.win.bind('<.>', self.speed)        # key code: 191
+        self.win.bind('<m>', self.speed)        # key code: 74
+        self.win.bind('<,>', self.speed)        # key code: 75
+        self.win.bind('<.>', self.speed)        # key code: 76
         self.win.bind('</>', self.speed)        # key code: 77
 
         def run(win:tk.Tk):
@@ -88,14 +88,14 @@ class KeyBindings:
 
     def speed(self, event):
         keycode = event.keycode
-        if keycode == 188:
-            log.debug('Key Pressed: "%s"', '<,>')
+        if keycode == 74:
+            log.debug('Key Pressed: "%s"', '<j>')
             self.bot.SPEED = 400
-        if keycode == 190:
-            log.debug('Key Pressed: "%s"', '<.>')
+        if keycode == 75:
+            log.debug('Key Pressed: "%s"', '<k>')
             self.bot.SPEED = 200
-        if keycode == 191:
-            log.debug('Key Pressed: "%s"', '</>')
+        if keycode == 76:
+            log.debug('Key Pressed: "%s"', '<l>')
             self.bot.SPEED = 100
         if keycode == 77:
             log.debug('Key Pressed: "%s"', '<m>')
