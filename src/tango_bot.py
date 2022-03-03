@@ -92,13 +92,19 @@ class TangBotController:
         log.debug('Move Head Down - Value: "%s"', self.HEAD_TILT_VAL)
         self.writeCmd(BotServos.HeadTilt.value, self.HEAD_TILT_VAL)
 
+    # TODO: Check that this moves left not right
+    # TODO: Check that BotServos.HeadPan.value is the correct value
     def moveHeadLeft(self):
-        self.HEAD_TURN_VAL += self.SPEED  # Check that this moves left not right
-        # TODO: write update to USB
+        self.HEAD_TURN_VAL += self.SPEED
+        log.debug('Move Head Left - Value: "%s"', self.HEAD_TURN_VAL)
+        self.writeCmd(BotServos.HeadPan.value, self.HEAD_TURN_VAL)
 
+    # TODO: Check that this moves right not left
+    # TODO: Check that BotServos.HeadPan.value is the correct value
     def moveHeadRight(self):
-        self.HEAD_TURN_VAL -= self.SPEED  # Check that this moves right not left
-        # TODO: write update to USB
+        self.HEAD_TURN_VAL -= self.SPEED
+        log.debug('Move Head Right - Value: "%s"', self.HEAD_TURN_VAL)
+        self.writeCmd(BotServos.HeadPan.value, self.HEAD_TURN_VAL)
 
     def increaseWheelSpeed(self):
         self.WHEEL_SPEED += self.SPEED
