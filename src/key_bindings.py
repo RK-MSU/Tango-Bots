@@ -7,8 +7,8 @@ from .log import log
 class KeyBindings:
 
     # properties
-    win : tk.Tk = None
-    bot: TangBotController = None
+    win:tk.Tk                   = None
+    bot:TangBotController       = None
 
     # constructor
     def __init__(self, bot:TangBotController):
