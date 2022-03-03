@@ -3,6 +3,15 @@
 from .usb import serial, getUSB
 from .log import log
 import time, threading, sys
+from enum import Enum
+
+class BotServos(Enum):
+    LeftWheel=0x00
+    RightWheel=0x01
+    Waist=0x02
+    HeadPan=0x03
+    HeadTilt=0x04
+
 
 class TangBotController:
 
