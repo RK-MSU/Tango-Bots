@@ -3,6 +3,7 @@
 import tkinter as tk
 from .tango_bot import TangBotController
 from .log import log
+import threading, sys
 
 class KeyBindings:
 
@@ -29,6 +30,23 @@ class KeyBindings:
         self.win.bind('<1>', self.speed)        # key code: 49
         self.win.bind('<2>', self.speed)        # key code: 50
         self.win.bind('<3>', self.speed)        # key code: 51
+
+        def run(win:tk.Tk):
+            try:
+                win.mainloop()
+            except RuntimeError:
+                log.debug('Calling Tcl from different apartment')
+
+        self.thread = threading.Thread(name="KeyBindings", target=run, args=[self.win], daemon=True)
+
+    def stop(self, event=None):
+        try:
+            self.win.destroy()
+            log.debug('KeyBindings: tkinter window destroyed.')
+        except tk.TclError:
+            log.debug('KeyBindings::stop() - Can\'t invoke "destroy" command: application has been destroyed')
+        self.bot.stop()
+        sys.exit(0)
 
     def arrows(self, event=None):
         keycode = event.keycode
@@ -78,12 +96,5 @@ class KeyBindings:
         if keycode == 49:
             log.debug('Key Pressed: "%s"', '<3>')
             self.bot.SPEED = 100
-
-    # start tkinter window
-    def start(self):
-        self.win.mainloop()
-
-    def stop(self, event=None):
-        self.win.destroy()
 
 # END

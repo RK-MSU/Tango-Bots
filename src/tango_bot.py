@@ -2,6 +2,7 @@
 
 from .usb import serial, getUSB
 from .log import log
+import time, threading, sys
 
 class TangBotController:
 
@@ -19,16 +20,24 @@ class TangBotController:
     SPEED_CEILING:int   = 7500              # Upper limit for wheel speed
     SPEED_FLOOR:int     = 4500              # Lower limit for wheel speed
 
+    running:bool        = None
+    lock:threading.Lock = None
+
     # constructor
     def __init__(self):
         self.usb = getUSB()
-        # TODO: the following it just temporary
-        target = 5896
-        # Build command
-        lsb = target &0x7F
-        msb = (target >> 7) & 0x7F
-        self.cmd = chr(0xaa) + chr(0xC) + chr(0x04) + chr(0x02) + chr(lsb) + chr(msb)
-        self.writeCmd()
+        self.running = True
+        self.lock = threading.Lock()
+        # Exit Safe Start
+        # Note: something I found online
+        # TODO: see if we need this
+        if self.usb is not None:
+            self.usb.write(chr(0x83).encode())
+
+    # Stop the robot
+    def stop(self):
+        self.running = False
+        # TODO: write to usb to stop wheels
 
     # write out command to usb
     def writeCmd(self):
