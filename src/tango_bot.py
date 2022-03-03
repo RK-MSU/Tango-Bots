@@ -110,6 +110,9 @@ class TangBotController:
 #        if self.WHEEL_SPEED > self.SPEED_CEILING:
             # set wheel speed to upper limit for wheels
 #            self.WHEEL_SPEED = self.SPEED_CEILING
+        self.writeCmd(BotServos.RightWheel.value, 6000)
+        self.writeCmd(BotServos.LeftWheel.value, 6000)
+        time.sleep(.2)  # CHECK THAT THIS WORKS
         self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
 
@@ -122,6 +125,9 @@ class TangBotController:
         if self.WHEEL_SPEED > self.SPEED_CEILING:
             # set wheel speed to upper limit for wheels
             self.WHEEL_SPEED = self.SPEED_CEILING
+        self.writeCmd(BotServos.RightWheel.value, 6000)
+        self.writeCmd(BotServos.LeftWheel.value, 6000)
+        time.sleep(.2)  # CHECK THAT THIS WORKS
         self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
 
