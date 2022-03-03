@@ -49,8 +49,8 @@ class TangBotController:
     # Stop the robot
     def stop(self):
         self.running = False
-        self.writeCmd(BotServos.RightWheel.value, 0)
-        self.writeCmd(BotServos.LeftWheel.value, 0)
+        self.writeCmd(BotServos.RightWheel.value, self.SPEED_START)
+        self.writeCmd(BotServos.LeftWheel.value, self.SPEED_START)
 
     # write out command to usb
     def writeCmd(self, chr_val, target:int=TARGET_CENTER):
@@ -102,6 +102,7 @@ class TangBotController:
         if self.WHEEL_SPEED > self.SPEED_CEILING:
             # set wheel speed to upper limit for wheels
             self.WHEEL_SPEED = self.SPEED_CEILING
+        log.debug('Current Wheel Speed: "%s"', self.WHEEL_SPEED)
         self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
 
@@ -122,7 +123,7 @@ class TangBotController:
             self.WHEEL_SPEED = self.SPEED_CEILING
         # TODO: write update to USB - left AND right wheels
 
-    def decreaseLeftWheelSpeed(self):
+    def decreaseRightWheelSpeed(self):
         self.WHEEL_SPEED += self.SPEED
         # make sure wheel speed does no exceed the lower limit
         if self.WHEEL_SPEED < self.SPEED_FLOOR:
