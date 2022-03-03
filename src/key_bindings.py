@@ -32,7 +32,7 @@ class KeyBindings:
         # start tkinter window
         self.win.mainloop()
 
-    def arrows(self, event):
+    def arrows(self, event=None):
         keycode = event.keycode
         if keycode == 111:
             log.debug('Key Pressed: "%s"', 'Up')
@@ -45,7 +45,7 @@ class KeyBindings:
         elif keycode == 114:
             log.debug('Key Pressed: "%s"', 'Right')
 
-    def waist(self, event):
+    def waist(self, event=None):
         keycode = event.keycode
         if keycode == 52:
             log.debug('Key Pressed: "%s"', '<Z>')
@@ -54,7 +54,7 @@ class KeyBindings:
             log.debug('Key Pressed: "%s"', '<C>')
             self.bot.moveWaistRight()
 
-    def head(self, event):
+    def head(self, event=None):
         keycode = event.keycode
         if keycode == 25:
             log.debug('Key Pressed: "%s"', '<W>')
