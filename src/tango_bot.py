@@ -78,13 +78,19 @@ class TangBotController:
         log.debug('Move Waist Right - Value: "%s"', self.WAIST_VAL)
         self.writeCmd(BotServos.Waist.value, self.WAIST_VAL)
 
+    # TODO: Check that this moves up not down
+    # TODO: Check that BotServos.HeadTilt is the correct value
     def moveHeadUp(self):
-        self.HEAD_TILT_VAL += self.SPEED  # Check that this moves up not down
-        # TODO: write update to USB
+        self.HEAD_TILT_VAL += self.SPEED
+        log.debug('Move Head Up - Value: "%s"', self.HEAD_TILT_VAL)
+        self.writeCmd(BotServos.HeadTilt.value, self.HEAD_TILT_VAL)
 
+    # TODO: Check that this moves down not up
+    # TODO: Check that BotServos.HeadTilt is the correct value
     def moveHeadDown(self):
-        self.HEAD_TILT_VAL -= self.SPEED  # Check that this moves down not up
-        # TODO: write update to USB
+        self.HEAD_TILT_VAL -= self.SPEED
+        log.debug('Move Head Down - Value: "%s"', self.HEAD_TILT_VAL)
+        self.writeCmd(BotServos.HeadTilt.value, self.HEAD_TILT_VAL)
 
     def moveHeadLeft(self):
         self.HEAD_TURN_VAL += self.SPEED  # Check that this moves left not right
