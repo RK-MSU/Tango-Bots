@@ -12,9 +12,12 @@ class TangBotController:
     WAIST_VAL:int       = TARGET_CENTER
     HEAD_TILT_VAL:int   = TARGET_CENTER     # This is the up/down value
     HEAD_TURN_VAL:int   = TARGET_CENTER     # This is the left/right value
-    LEFT_MOTOR:int      = 0                 # This is the current speed of the motor
-    RIGHT_MOTOR:int     = 0                 # This is the current speed of the motor
+    LEFT_MOTOR:int      = TARGET_CENTER     # This is the current speed of the motor
+    RIGHT_MOTOR:int     = TARGET_CENTER     # This is the current speed of the motor
+    WHEEL_SPEED:int     = TARGET_CENTER     # When the robot is going forward/backward, the wheel speed is the same
     SPEED:int           = 200               # This is the current update to the motor
+    SPEED_CEILING:int   = 7500              # Upper limit for wheel speed
+    SPEED_FLOOR:int     = 4500              # Lower limit for wheel speed
 
     # constructor
     def __init__(self):
