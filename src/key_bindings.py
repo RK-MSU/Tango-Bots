@@ -99,7 +99,7 @@ class KeyBindings:
             self.bot.SPEED = 100
         if keycode == 48:
             log.debug('Key Pressed: "%s"', '<0>')
-            self.bot.WHEEL_SPEED = self.bot.SPEED_START
+            self.bot.stop()
 
 
 # END
