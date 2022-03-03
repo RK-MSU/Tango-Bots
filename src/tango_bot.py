@@ -25,7 +25,7 @@ class TangBotController:
     LEFT_MOTOR:int      = TARGET_CENTER     # This is the current speed of the motor
     RIGHT_MOTOR:int     = TARGET_CENTER     # This is the current speed of the motor
     WHEEL_SPEED:int     = 6000     # When the robot is going forward/backward, the wheel speed is the same
-    SPEED:int           = 200               # This is the current update to the motor
+    SPEED:int           = 700               # This is the current update to the motor
     SPEED_CEILING:int   = 7500              # Upper limit for wheel speed
     SPEED_FLOOR:int     = 4500              # Lower limit for wheel speed
     SPEED_START:int     = 6000              # No Motor Movement ????
@@ -118,7 +118,7 @@ class TangBotController:
 
     def decreaseWheelSpeed(self):
         self.WHEEL_SPEED += self.SPEED
-        # make sure wheel speed does no exceed the lower limit
+        # make sure wheel speed does not exceed the lower limit
 #        if self.WHEEL_SPEED < self.SPEED_FLOOR:
             # set wheel speed to lower limit for wheels
 #            self.WHEEL_SPEED = self.SPEED_FLOOR
@@ -132,19 +132,32 @@ class TangBotController:
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
 
     def increaseRightWheelSpeed(self):
-        self.WHEEL_SPEED -= self.SPEED
+        # self.WHEEL_SPEED -= self.SPEED
         # make sure wheel speed does no exceed the upper limit
-        if self.WHEEL_SPEED < self.SPEED_FLOOR:
+        if self.WHEEL_SPEED - self.SPEED < self.SPEED_FLOOR:
             # set wheel speed to lower limit for wheels
             self.WHEEL_SPEED = self.SPEED_FLOOR
-        # TODO: write update to USB - left AND right wheels
+        if self.WHEEL_SPEED + self.SPEED > self.SPEED_CEILING:
+            # set wheel speed to upper limit for wheels
+            self.WHEEL_SPEED = self.SPEED_CEILING
+        self.writeCmd(BotServos.RightWheel.value, 6000)
+        self.writeCmd(BotServos.LeftWheel.value, 6000)
+        time.sleep(.2)  # CHECK THAT THIS WORKS
+        self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED - self.SPEED)
+        self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED + self.SPEED)
 
     def decreaseRightWheelSpeed(self):
-        self.WHEEL_SPEED += self.SPEED
+        # self.WHEEL_SPEED += self.SPEED
         # make sure wheel speed does no exceed the lower limit
-        if self.WHEEL_SPEED > self.SPEED_FLOOR:
+        if self.WHEEL_SPEED - self.SPEED < self.SPEED_FLOOR:
             # set wheel speed to lower limit for wheels
             self.WHEEL_SPEED = self.SPEED_FLOOR
-        # TODO: write update to USB - left AND right wheels
-
+        if self.WHEEL_SPEED + self.SPEED > self.SPEED_CEILING:
+            # set wheel speed to upper limit for wheels
+            self.WHEEL_SPEED = self.SPEED_CEILING
+        self.writeCmd(BotServos.RightWheel.value, 6000)
+        self.writeCmd(BotServos.LeftWheel.value, 6000)
+        time.sleep(.2)  # CHECK THAT THIS WORKS
+        self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED + self.SPEED)
+        self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED - self.SPEED)
 # END

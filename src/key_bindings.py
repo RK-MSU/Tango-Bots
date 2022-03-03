@@ -86,7 +86,7 @@ class KeyBindings:
             log.debug('Key Pressed: "%s"', '<D>')
             self.bot.moveHeadRight()
 
-    def speed(self, event):
+    def speed(self, event=None):
         keycode = event.keycode
         if keycode == 74:
             log.debug('Key Pressed: "%s"', '<j>')
