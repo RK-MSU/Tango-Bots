@@ -24,7 +24,7 @@ class TangBotController:
     HEAD_TURN_VAL:int   = TARGET_CENTER     # This is the left/right value
     LEFT_MOTOR:int      = TARGET_CENTER     # This is the current speed of the motor
     RIGHT_MOTOR:int     = TARGET_CENTER     # This is the current speed of the motor
-    WHEEL_SPEED:int     = TARGET_CENTER     # When the robot is going forward/backward, the wheel speed is the same
+    WHEEL_SPEED:int     = 6000     # When the robot is going forward/backward, the wheel speed is the same
     SPEED:int           = 200               # This is the current update to the motor
     SPEED_CEILING:int   = 7500              # Upper limit for wheel speed
     SPEED_FLOOR:int     = 4500              # Lower limit for wheel speed
@@ -104,22 +104,21 @@ class TangBotController:
     def increaseWheelSpeed(self):
         self.WHEEL_SPEED -= self.SPEED
         # make sure wheel speed does no exceed the upper limit
-        if self.WHEEL_SPEED > self.SPEED_CEILING:
+        if self.WHEEL_SPEED < self.SPEED_FLOOR:
+            # set wheel speed to lower limit for wheels
+            self.WHEEL_SPEED = self.SPEED_FLOOR
+#        if self.WHEEL_SPEED > self.SPEED_CEILING:
             # set wheel speed to upper limit for wheels
-            self.WHEEL_SPEED = self.SPEED_CEILING
-        log.debug('Current Wheel Speed: "%s"', self.WHEEL_SPEED)
-        if self.WHEEL_SPEED > self.SPEED_CEILING:
-            # set wheel speed to upper limit for wheels
-            self.WHEEL_SPEED = self.SPEED_CEILING
+#            self.WHEEL_SPEED = self.SPEED_CEILING
         self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
 
     def decreaseWheelSpeed(self):
         self.WHEEL_SPEED += self.SPEED
         # make sure wheel speed does no exceed the lower limit
-        if self.WHEEL_SPEED < self.SPEED_FLOOR:
+#        if self.WHEEL_SPEED < self.SPEED_FLOOR:
             # set wheel speed to lower limit for wheels
-            self.WHEEL_SPEED = self.SPEED_FLOOR
+#            self.WHEEL_SPEED = self.SPEED_FLOOR
         if self.WHEEL_SPEED > self.SPEED_CEILING:
             # set wheel speed to upper limit for wheels
             self.WHEEL_SPEED = self.SPEED_CEILING
