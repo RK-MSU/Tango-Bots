@@ -51,10 +51,14 @@ class TangBotController:
         # TODO: write to usb to stop wheels
 
     # write out command to usb
-    def writeCmd(self):
-        # Check if usb is not None
+    def writeCmd(self, chr_val, target:int=TARGET_CENTER):
+        # Build command
+        lsb = target &0x7F
+        msb = (target >> 7) & 0x7F
+        self.cmd = chr(0xaa) + chr(0xC) + chr(0x04) + chr(chr_val) + chr(lsb) + chr(msb)
         command = self.cmd.encode('utf-8')
         log.debug('Writing USB Command: "%s"', command)
+        # Check if usb is not None
         if self.usb is not None:
             self.usb.write(command)
         else:
