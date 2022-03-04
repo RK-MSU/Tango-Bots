@@ -28,7 +28,7 @@ class TangBotController:
     LEFT_MOTOR: int      = TARGET_CENTER     # This is the current speed of the motor
     RIGHT_MOTOR: int     = TARGET_CENTER     # This is the current speed of the motor
     WHEEL_SPEED: int     = 6000     # When the robot is going forward/backward, the wheel speed is the same
-    SPEED: int           = 500               # This is the current update to the motor
+    SPEED: int           = 100               # This is the current update to the motor
     SPEED_CEILING: int   = 7500              # Upper limit for wheel speed
     SPEED_FLOOR: int     = 4500              # Lower limit for wheel speed
     SPEED_START: int     = 6000              # No Motor Movement ????
@@ -39,8 +39,8 @@ class TangBotController:
     # constructor
     def __init__(self):
         self.usb = getUSB()
-        # if self.usb is not None:
-        #     self.usb.write_timeout = 0.5  # TEST THIS
+        if self.usb is not None:
+            self.usb.write_timeout = 0.5  # TEST THIS
         self.running = True
         self.lock = threading.Lock()
         # Exit Safe Start
@@ -126,8 +126,6 @@ class TangBotController:
         # self.writeCmd(BotServos.RightWheel.value, 6000)
         # self.writeCmd(BotServos.LeftWheel.value, 6000)
         # time.sleep(.2)  # Forces robot to finish clearing itself, so it doesn't write incorrectly
-        self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
-        self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
         self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
         # time.sleep(.2)
