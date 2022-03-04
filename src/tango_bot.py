@@ -49,6 +49,10 @@ class TangBotController:
         if self.usb is not None:
             self.usb.write(chr(0x83).encode())
 
+
+        self.writeCmd(BotServos.RightWheel.value, 6000)
+        self.writeCmd(BotServos.LeftWheel.value, 6000)
+
     # Stop the robot
     def stop(self):
         self.running = False
