@@ -59,57 +59,52 @@ class KeyBindings:
             self.bot.stopMoving()
 
     def arrows(self, event=None):
-        keycode = event.keycode
-        if keycode == 111:
+        if event.char == 'Up':
             log.debug('Key Pressed: "%s"', 'Up')
             self.bot.increaseWheelSpeed()
-        elif keycode == 116:
+        elif event.char == 'Down':
             log.debug('Key Pressed: "%s"', 'Down')
             self.bot.decreaseWheelSpeed()
-        elif keycode == 113:
+        elif event.char == 'Left':
             log.debug('Key Pressed: "%s"', 'Left')
             self.bot.turnLeft()
-        elif keycode == 114:
+        elif event.char == 'Right':
             log.debug('Key Pressed: "%s"', 'Right')
             self.bot.turnRight()
 
     def waist(self, event=None):
-        keycode = event.keycode
-        if keycode == 52:
+        if event.char == 'z':
             log.debug('Key Pressed: "%s"', '<Z>')
             self.bot.moveWaistLeft()
-        elif keycode == 54:
+        elif event.char == 'c':
             log.debug('Key Pressed: "%s"', '<C>')
             self.bot.moveWaistRight()
 
     def head(self, event=None):
-        keycode = event.keycode
-        if keycode == 25:
+        if event.char == 'w':
             log.debug('Key Pressed: "%s"', '<W>')
             self.bot.moveHeadUp()
-        elif keycode == 39:
+        elif event.char == 's':
             log.debug('Key Pressed: "%s"', '<S>')
             self.bot.moveHeadDown()
-        elif keycode == 38:
+        elif event.char == 'a':
             log.debug('Key Pressed: "%s"', '<A>')
             self.bot.moveHeadLeft()
-        elif keycode == 40:
+        elif event.char == 'd':
             log.debug('Key Pressed: "%s"', '<D>')
             self.bot.moveHeadRight()
 
     def speed(self, event=None):
-        keycode = event.keycode
-        print("Keycode: ", keycode)
-        if keycode == 44:
+        if event.char == 'j':
             log.debug('Key Pressed: "%s"', '<j>')
             self.bot.setSpeed(100)
-        elif keycode == 45:
+        elif event.char == 'k':
             log.debug('Key Pressed: "%s"', '<k>')
             self.bot.setSpeed(500)
-        elif keycode == 46:
+        elif event.char == 'l':
             log.debug('Key Pressed: "%s"', '<l>')
             self.bot.setSpeed(800)
-        elif keycode == 58:
+        elif event.char == 'm':
             log.debug('Key Pressed: "%s"', '<m>')
             self.bot.stopMoving()
 
