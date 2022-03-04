@@ -38,6 +38,11 @@ class TangBotController:
     lock:threading.Lock = None
 
     direction_state = None
+    turning_timeout = 2
+    turning_left = None
+    turning_left_start_time = None
+    turning_right = None
+    turning_right_start_time = None
 
     # constructor
     def __init__(self):
@@ -197,6 +202,17 @@ class TangBotController:
             self.stopMoving()
             self.WHEEL_SPEED = self.SPEED_START
         self.direction_state = 'r'
+
+        self.stopMoving()
+        self.turning_right = True
+        self.turning_right_start_time = time.time()
+
+        while self.turning_right_start_time + self.turning_timeout < time.time():
+            self.writeCmd(BotServos.RightWheel.value, 5000)
+        return
+
+
+
         # make sure wheel speed does not exceed the lower limit
         if self.WHEEL_SPEED - self.SPEED < self.SPEED_FLOOR:
             # set wheel speed to lower limit for wheels
@@ -207,7 +223,8 @@ class TangBotController:
         # self.writeCmd(BotServos.RightWheel.value, 6000)
         # self.writeCmd(BotServos.LeftWheel.value, 6000)
         # time.sleep(.2)
-        self.writeCmd(BotServos.RightWheel.value, 5000)
+        while True:
+            self.writeCmd(BotServos.RightWheel.value, 5000)
         time.sleep(.2)
         self.stopMoving()
         # time.sleep(.2)
