@@ -120,9 +120,9 @@ class TangBotController:
             # set wheel speed to lower limit for wheels
             self.WHEEL_SPEED = self.SPEED_FLOOR
         # Reset robot to make sure it doesn't confuse itself
-        self.writeCmd(BotServos.RightWheel.value, 6000)
-        self.writeCmd(BotServos.LeftWheel.value, 6000)
-        time.sleep(.2)  # Forces robot to finish clearing itself, so it doesn't write incorrectly
+        # self.writeCmd(BotServos.RightWheel.value, 6000)
+        # self.writeCmd(BotServos.LeftWheel.value, 6000)
+        # time.sleep(.2)  # Forces robot to finish clearing itself, so it doesn't write incorrectly
         self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
         time.sleep(.2)
