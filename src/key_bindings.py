@@ -27,10 +27,10 @@ class KeyBindings:
         self.win.bind('<d>', self.head)         # key code: 40
         self.win.bind('<z>', self.waist)        # key code: 52
         self.win.bind('<c>', self.waist)        # key code: 54
-        self.win.bind('<m>', self.speed)        # key code: 74
-        self.win.bind('<j>', self.speed)        # key code: 75
-        self.win.bind('<k>', self.speed)        # key code: 76
-        self.win.bind('<l>', self.speed)        # key code: 77
+        self.win.bind('<m>', self.speed)        # key code: 58
+        self.win.bind('<j>', self.speed)        # key code: 44
+        self.win.bind('<k>', self.speed)        # key code: 45
+        self.win.bind('<l>', self.speed)        # key code: 46
 
         def run(win:tk.Tk):
             try:
@@ -91,16 +91,16 @@ class KeyBindings:
     def speed(self, event=None):
         keycode = event.keycode
         print("Keycode: ", keycode)
-        if keycode == 74:
+        if keycode == 44:
             log.debug('Key Pressed: "%s"', '<j>')
             self.bot.SPEED = 800
-        elif keycode == 75:
+        elif keycode == 45:
             log.debug('Key Pressed: "%s"', '<k>')
             self.bot.SPEED = 500
-        elif keycode == 76:
+        elif keycode == 46:
             log.debug('Key Pressed: "%s"', '<l>')
             self.bot.SPEED = 200
-        elif keycode == 77:
+        elif keycode == 58:
             log.debug('Key Pressed: "%s"', '<m>')
             self.bot.stopMoving()
 
