@@ -1,18 +1,21 @@
 # key_bindings.py
 
+import sys
+import threading
 import tkinter as tk
-from .tango_bot import TangBotController
+
 from .log import log
-import threading, sys
+from .tango_bot import TangBotController
+
 
 class KeyBindings:
 
     # properties
-    win:tk.Tk                   = None
-    bot:TangBotController       = None
+    win: tk.Tk                   = None
+    bot: TangBotController       = None
 
     # constructor
-    def __init__(self, bot:TangBotController):
+    def __init__(self, bot: TangBotController):
         self.bot = bot
         self.win = tk.Tk()
         # setup keybindings
@@ -32,7 +35,7 @@ class KeyBindings:
         self.win.bind('<k>', self.speed)        # key code: 45
         self.win.bind('<l>', self.speed)        # key code: 46
 
-        def run(win:tk.Tk):
+        def run(win: tk.Tk):
             try:
                 win.mainloop()
             except RuntimeError:
