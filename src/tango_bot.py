@@ -205,7 +205,7 @@ class TangBotController:
 
 
         self.writeCmd(BotServos.RightWheel.value, 4500)
-        time.sleep(.2)
+        time.sleep(.5)
         self.stopMoving()
 
         return
