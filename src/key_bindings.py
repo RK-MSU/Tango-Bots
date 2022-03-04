@@ -101,7 +101,7 @@ class KeyBindings:
             self.bot.SPEED = 200
         elif keycode == 77:
             log.debug('Key Pressed: "%s"', '<m>')
-            self.bot.stop()
+            self.bot.stopMoving()
 
 
 # END
