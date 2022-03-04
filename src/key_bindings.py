@@ -54,7 +54,7 @@ class KeyBindings:
         sys.exit(0)
 
     def stopRobot(self, event):
-        if event.keycode == 24:
+        if event.char == 'q':
             log.debug('Key Pressed: "%s"', 'Q')
             self.bot.stopMoving()
 
