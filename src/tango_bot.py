@@ -78,7 +78,7 @@ class TangBotController:
         self.SPEED = speed
 
     def stopMoving(self):
-        print('Trying to stop motors')
+        # print('Trying to stop motors')
         self.writeCmd(BotServos.RightWheel.value, self.SPEED_START)
         self.writeCmd(BotServos.LeftWheel.value, self.SPEED_START)
         time.sleep(.2)
@@ -122,8 +122,7 @@ class TangBotController:
     def increaseWheelSpeed(self):
 
         if self.direction_state != 'f':
-            self.writeCmd(BotServos.RightWheel.value, self.SPEED_START)
-            self.writeCmd(BotServos.LeftWheel.value, self.SPEED_START)
+            self.stopMoving()
             self.WHEEL_SPEED = self.SPEED_START
         self.direction_state = 'f'
 
@@ -144,8 +143,7 @@ class TangBotController:
     def decreaseWheelSpeed(self):
 
         if self.direction_state != 'b':
-            self.writeCmd(BotServos.RightWheel.value, self.SPEED_START)
-            self.writeCmd(BotServos.LeftWheel.value, self.SPEED_START)
+            self.stopMoving()
             self.WHEEL_SPEED = self.SPEED_START
         self.direction_state = 'b'
 
@@ -163,6 +161,10 @@ class TangBotController:
         # time.sleep(.2)
 
     def turnLeft(self):
+        if self.direction_state != 'l':
+            self.stopMoving()
+            self.WHEEL_SPEED = self.SPEED_START
+        self.direction_state = 'l'
         # make sure wheel speed does not exceed the upper limit
         if self.WHEEL_SPEED - self.SPEED < self.SPEED_FLOOR:
             # set wheel speed to lower limit for wheels
@@ -178,6 +180,10 @@ class TangBotController:
 #        self.writeCmd(BotServos.LeftWheel.value,  7000)  # self.WHEEL_SPEED + self.SPEED)
 
     def turnRight(self):
+        if self.direction_state != 'r':
+            self.stopMoving()
+            self.WHEEL_SPEED = self.SPEED_START
+        self.direction_state = 'r'
         # make sure wheel speed does not exceed the lower limit
         if self.WHEEL_SPEED - self.SPEED < self.SPEED_FLOOR:
             # set wheel speed to lower limit for wheels
