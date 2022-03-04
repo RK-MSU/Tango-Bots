@@ -39,8 +39,8 @@ class TangBotController:
     # constructor
     def __init__(self):
         self.usb = getUSB()
-        if self.usb is not None:
-            self.usb.write_timeout = 0.5  # TEST THIS
+        # if self.usb is not None:
+        #     self.usb.write_timeout = 0.5  # TEST THIS
         self.running = True
         self.lock = threading.Lock()
         # Exit Safe Start
@@ -50,7 +50,6 @@ class TangBotController:
             self.usb.write(chr(0x83).encode())
 
         self.writeCmd(BotServos.RightWheel.value, self.SPEED_START)
-        time.sleep(.2)
         self.writeCmd(BotServos.LeftWheel.value, self.SPEED_START)
 
     # Stop the robot
@@ -128,7 +127,6 @@ class TangBotController:
         # self.writeCmd(BotServos.LeftWheel.value, 6000)
         # time.sleep(.2)  # Forces robot to finish clearing itself, so it doesn't write incorrectly
         self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
-        time.sleep(.2)
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
         # time.sleep(.2)
 
