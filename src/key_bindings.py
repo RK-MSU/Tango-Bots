@@ -30,6 +30,7 @@ class KeyBindings:
         self.win.bind('<d>', self.head)         # key code: 40
         self.win.bind('<z>', self.waist)        # key code: 52
         self.win.bind('<c>', self.waist)        # key code: 54
+        self.win.bind('<x>', self.waist)        # key code: 54
         self.win.bind('<m>', self.speed)        # key code: 58
         self.win.bind('<j>', self.speed)        # key code: 44
         self.win.bind('<k>', self.speed)        # key code: 45
