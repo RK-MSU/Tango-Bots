@@ -76,36 +76,43 @@ class TangBotController:
         print('Trying to stop motors')
         self.writeCmd(BotServos.RightWheel.value, self.SPEED_START)
         self.writeCmd(BotServos.LeftWheel.value, self.SPEED_START)
+        time.sleep(.2)
 
     def moveWaistLeft(self):
         self.WAIST_VAL += self.SPEED
         log.debug('Move Waist Left - Value: "%s"', self.WAIST_VAL)
         self.writeCmd(BotServos.Waist.value, self.WAIST_VAL)
+        time.sleep(.2)
 
     def moveWaistRight(self):
         self.WAIST_VAL -= self.SPEED
         log.debug('Move Waist Right - Value: "%s"', self.WAIST_VAL)
         self.writeCmd(BotServos.Waist.value, self.WAIST_VAL)
+        time.sleep(.2)
 
     def moveHeadUp(self):
         self.HEAD_TILT_VAL += self.SPEED
         log.debug('Move Head Up - Value: "%s"', self.HEAD_TILT_VAL)
         self.writeCmd(BotServos.HeadTilt.value, self.HEAD_TILT_VAL)
+        time.sleep(.2)
 
     def moveHeadDown(self):
         self.HEAD_TILT_VAL -= self.SPEED
         log.debug('Move Head Down - Value: "%s"', self.HEAD_TILT_VAL)
         self.writeCmd(BotServos.HeadTilt.value, self.HEAD_TILT_VAL)
+        time.sleep(.2)
 
     def moveHeadLeft(self):
         self.HEAD_TURN_VAL += self.SPEED
         log.debug('Move Head Left - Value: "%s"', self.HEAD_TURN_VAL)
         self.writeCmd(BotServos.HeadPan.value, self.HEAD_TURN_VAL)
+        time.sleep(.2)
 
     def moveHeadRight(self):
         self.HEAD_TURN_VAL -= self.SPEED
         log.debug('Move Head Right - Value: "%s"', self.HEAD_TURN_VAL)
         self.writeCmd(BotServos.HeadPan.value, self.HEAD_TURN_VAL)
+        time.sleep(.2)
 
     def increaseWheelSpeed(self):
         self.WHEEL_SPEED -= self.SPEED
@@ -119,6 +126,7 @@ class TangBotController:
         time.sleep(.2)  # Forces robot to finish clearing itself, so it doesn't write incorrectly
         self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
+        time.sleep(.2)
 
     def decreaseWheelSpeed(self):
         self.WHEEL_SPEED += self.SPEED
@@ -132,6 +140,7 @@ class TangBotController:
         time.sleep(.2)  # Forces robot to finish clearing itself, so it doesn't write incorrectly
 #        self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
+        time.sleep(.2)
 
     def turnLeft(self):
         # make sure wheel speed does not exceed the upper limit
@@ -145,6 +154,7 @@ class TangBotController:
         self.writeCmd(BotServos.LeftWheel.value, 6000)
         time.sleep(.2)
         self.writeCmd(BotServos.RightWheel.value, 7000)
+        time.sleep(.2)
 #        self.writeCmd(BotServos.LeftWheel.value,  7000)  # self.WHEEL_SPEED + self.SPEED)
 
     def turnRight(self):
@@ -159,5 +169,6 @@ class TangBotController:
         self.writeCmd(BotServos.LeftWheel.value, 6000)
         time.sleep(.2)
         self.writeCmd(BotServos.RightWheel.value, 5000)
+        time.sleep(.2)
 #        self.writeCmd(BotServos.LeftWheel.value, 7000)
 # END
