@@ -62,7 +62,7 @@ class TangBotController:
         # Build command
         lsb = target &0x7F
         msb = (target >> 7) & 0x7F
-        self.cmd = chr(0xaa) + chr(0xC) + chr(0x04) + chr(0x0 + chr_val) + chr(lsb) + chr(msb)
+        self.cmd = chr(0xaa) + chr(0xC) + chr(0x04) + chr(chr_val) + chr(lsb) + chr(msb)
         command = self.cmd.encode('utf-8')
         log.debug('Writing USB Command: "%s"', command)
         # Check if usb is not None
@@ -144,7 +144,7 @@ class TangBotController:
         self.writeCmd(BotServos.LeftWheel.value, 6000)
         time.sleep(.2)
 #        self.writeCmd(BotServos.RightWheel.value, 7000)
-        self.writeCmd(BotServos.LeftWheel.value,  5000)  # self.WHEEL_SPEED + self.SPEED)
+        self.writeCmd(BotServos.LeftWheel.value,  7000)  # self.WHEEL_SPEED + self.SPEED)
 
     def turnRight(self):
         # self.WHEEL_SPEED += self.SPEED
