@@ -128,7 +128,7 @@ class TangBotController:
         # time.sleep(.2)  # Forces robot to finish clearing itself, so it doesn't write incorrectly
         self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
-        # time.sleep(.2)
+
 
     def decreaseWheelSpeed(self):
         self.WHEEL_SPEED += self.SPEED
@@ -137,12 +137,9 @@ class TangBotController:
             # set wheel speed to upper limit for wheels
             self.WHEEL_SPEED = self.SPEED_CEILING
         # Reset motors to make sure it doesn't confuse itself
-        self.writeCmd(BotServos.RightWheel.value, 6000)
-        self.writeCmd(BotServos.LeftWheel.value, 6000)
-        time.sleep(.2)  # Forces robot to finish clearing itself, so it doesn't write incorrectly
 #        self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
+        self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
-        time.sleep(.2)
 
     def turnLeft(self):
         # make sure wheel speed does not exceed the upper limit
