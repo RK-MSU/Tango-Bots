@@ -191,7 +191,7 @@ class TangBotController:
         # self.writeCmd(BotServos.RightWheel.value, 6000)
         # self.writeCmd(BotServos.LeftWheel.value, 6000)
         # time.sleep(.2)
-        self.writeCmd(BotServos.RightWheel.value, 7000)
+        self.writeCmd(BotServos.RightWheel.value, 7250)
         time.sleep(.2)
         self.stopMoving()
         # time.sleep(.2)
@@ -204,8 +204,8 @@ class TangBotController:
         self.direction_state = 'r'
 
 
-        self.writeCmd(BotServos.RightWheel.value, 4500)
-        time.sleep(.5)
+        self.writeCmd(BotServos.RightWheel.value, 4750)
+        time.sleep(.2)
         self.stopMoving()
 
         return
