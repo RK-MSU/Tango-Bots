@@ -40,7 +40,7 @@ class TangBotController:
     def __init__(self):
         self.usb = getUSB()
         if self.usb is not None:
-            self.usb.write_timeout = 1  # TEST THIS
+            self.usb.write_timeout = 0.5  # TEST THIS
         self.running = True
         self.lock = threading.Lock()
         # Exit Safe Start
@@ -152,11 +152,11 @@ class TangBotController:
         if self.WHEEL_SPEED + self.SPEED > self.SPEED_CEILING:
             # set wheel speed to upper limit for wheels
             self.WHEEL_SPEED = self.SPEED_CEILING
-        self.writeCmd(BotServos.RightWheel.value, 6000)
-        self.writeCmd(BotServos.LeftWheel.value, 6000)
-        time.sleep(.2)
+        # self.writeCmd(BotServos.RightWheel.value, 6000)
+        # self.writeCmd(BotServos.LeftWheel.value, 6000)
+        # time.sleep(.2)
         self.writeCmd(BotServos.RightWheel.value, 7000)
-        time.sleep(.2)
+        # time.sleep(.2)
 #        self.writeCmd(BotServos.LeftWheel.value,  7000)  # self.WHEEL_SPEED + self.SPEED)
 
     def turnRight(self):
@@ -167,10 +167,10 @@ class TangBotController:
         if self.WHEEL_SPEED + self.SPEED > self.SPEED_CEILING:
             # set wheel speed to upper limit for wheels
             self.WHEEL_SPEED = self.SPEED_CEILING
-        self.writeCmd(BotServos.RightWheel.value, 6000)
-        self.writeCmd(BotServos.LeftWheel.value, 6000)
-        time.sleep(.2)
+        # self.writeCmd(BotServos.RightWheel.value, 6000)
+        # self.writeCmd(BotServos.LeftWheel.value, 6000)
+        # time.sleep(.2)
         self.writeCmd(BotServos.RightWheel.value, 5000)
-        time.sleep(.2)
+        # time.sleep(.2)
 #        self.writeCmd(BotServos.LeftWheel.value, 7000)
 # END
