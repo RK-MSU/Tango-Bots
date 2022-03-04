@@ -52,8 +52,7 @@ class TangBotController:
     # Stop the robot
     def stop(self):
         self.running = False
-        self.writeCmd(BotServos.RightWheel.value, self.SPEED_START)
-        self.writeCmd(BotServos.LeftWheel.value, self.SPEED_START)
+        self.stopMoving()
 
     def writeCmd(self, chr_val, target: int = TARGET_CENTER):
         # Build command
