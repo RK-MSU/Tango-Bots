@@ -203,6 +203,13 @@ class TangBotController:
             self.WHEEL_SPEED = self.SPEED_START
         self.direction_state = 'r'
 
+
+        self.writeCmd(BotServos.RightWheel.value, 5000)
+        time.sleep(.2)
+        self.stopMoving()
+
+        return
+
         self.stopMoving()
         self.turning_right = True
         self.turning_right_start_time = time.time()
