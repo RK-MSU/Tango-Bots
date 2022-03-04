@@ -59,10 +59,10 @@ class KeyBindings:
             self.bot.decreaseWheelSpeed()
         elif keycode == 113:
             log.debug('Key Pressed: "%s"', 'Left')
-            self.bot.decreaseRightWheelSpeed()
+            self.bot.turnLeft()
         elif keycode == 114:
             log.debug('Key Pressed: "%s"', 'Right')
-            self.bot.increaseRightWheelSpeed()
+            self.bot.turnRight()
 
     def waist(self, event=None):
         keycode = event.keycode
@@ -92,14 +92,14 @@ class KeyBindings:
         keycode = event.keycode
         if keycode == 74:
             log.debug('Key Pressed: "%s"', '<j>')
-            self.bot.SPEED = 400
-        if keycode == 75:
+            self.bot.SPEED = 800
+        elif keycode == 75:
             log.debug('Key Pressed: "%s"', '<k>')
-            self.bot.SPEED = 200
-        if keycode == 76:
+            self.bot.SPEED = 500
+        elif keycode == 76:
             log.debug('Key Pressed: "%s"', '<l>')
-            self.bot.SPEED = 100
-        if keycode == 77:
+            self.bot.SPEED = 200
+        elif keycode == 77:
             log.debug('Key Pressed: "%s"', '<m>')
             self.bot.stop()
 
