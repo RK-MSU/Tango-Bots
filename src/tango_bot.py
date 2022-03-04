@@ -128,6 +128,8 @@ class TangBotController:
         # time.sleep(.2)  # Forces robot to finish clearing itself, so it doesn't write incorrectly
         self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
+        self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
+        self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
         # time.sleep(.2)
 
     def decreaseWheelSpeed(self):
