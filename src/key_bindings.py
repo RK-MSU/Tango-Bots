@@ -59,16 +59,16 @@ class KeyBindings:
             self.bot.stopMoving()
 
     def arrows(self, event=None):
-        if event.char == 'Up':
+        if event.keycode == 111:
             log.debug('Key Pressed: "%s"', 'Up')
             self.bot.increaseWheelSpeed()
-        elif event.char == 'Down':
+        elif event.keycode == 116:
             log.debug('Key Pressed: "%s"', 'Down')
             self.bot.decreaseWheelSpeed()
-        elif event.char == 'Left':
+        elif event.keycode == 113:
             log.debug('Key Pressed: "%s"', 'Left')
             self.bot.turnLeft()
-        elif event.char == 'Right':
+        elif event.keycode == 114:
             log.debug('Key Pressed: "%s"', 'Right')
             self.bot.turnRight()
 
