@@ -22,19 +22,22 @@ class TangBotController:
     usb: serial.Serial   = None
     cmd                 = None
     TARGET_CENTER: int   = 5896
+    SPEED_START: int     = 6000              # No Motor Movement ????
     WAIST_VAL: int       = TARGET_CENTER
     HEAD_TILT_VAL: int   = TARGET_CENTER     # This is the up/down value
     HEAD_TURN_VAL: int   = TARGET_CENTER     # This is the left/right value
     LEFT_MOTOR: int      = TARGET_CENTER     # This is the current speed of the motor
     RIGHT_MOTOR: int     = TARGET_CENTER     # This is the current speed of the motor
-    WHEEL_SPEED: int     = 6000     # When the robot is going forward/backward, the wheel speed is the same
+    WHEEL_SPEED: int     = SPEED_START       # When the robot is going forward/backward, the wheel speed is the same
     SPEED: int           = 300               # This is the current update to the motor
     SPEED_CEILING: int   = 7500              # Upper limit for wheel speed
     SPEED_FLOOR: int     = 4500              # Lower limit for wheel speed
-    SPEED_START: int     = 6000              # No Motor Movement ????
+    
 
     running:bool        = None
     lock:threading.Lock = None
+
+    direction_state = None
 
     # constructor
     def __init__(self):
@@ -117,6 +120,14 @@ class TangBotController:
         time.sleep(.2)
 
     def increaseWheelSpeed(self):
+
+        if self.direction_state != 'f':
+            self.writeCmd(BotServos.RightWheel.value, self.SPEED_START)
+            self.writeCmd(BotServos.LeftWheel.value, self.SPEED_START)
+            self.WHEEL_SPEED = self.SPEED_START
+        self.direction_state = 'f'
+
+
         self.WHEEL_SPEED -= self.SPEED
         # make sure wheel speed does not exceed the upper limit
         if self.WHEEL_SPEED < self.SPEED_FLOOR:
@@ -131,14 +142,21 @@ class TangBotController:
         # time.sleep(.2)
 
     def decreaseWheelSpeed(self):
+
+        if self.direction_state != 'b':
+            self.writeCmd(BotServos.RightWheel.value, self.SPEED_START)
+            self.writeCmd(BotServos.LeftWheel.value, self.SPEED_START)
+            self.WHEEL_SPEED = self.SPEED_START
+        self.direction_state = 'b'
+
         self.WHEEL_SPEED += self.SPEED
         # make sure wheel speed does not exceed the lower limit
         if self.WHEEL_SPEED > self.SPEED_CEILING:
             # set wheel speed to upper limit for wheels
             self.WHEEL_SPEED = self.SPEED_CEILING
         # Reset motors to make sure it doesn't confuse itself
-        self.writeCmd(BotServos.RightWheel.value, 6000)
-        self.writeCmd(BotServos.LeftWheel.value, 6000)
+        # self.writeCmd(BotServos.RightWheel.value, 6000)
+        # self.writeCmd(BotServos.LeftWheel.value, 6000)
         # time.sleep(0.5)  # Forces robot to finish clearing itself, so it doesn't write incorrectly
 #        self.writeCmd(BotServos.RightWheel.value, self.WHEEL_SPEED)
         self.writeCmd(BotServos.LeftWheel.value, self.WHEEL_SPEED)
