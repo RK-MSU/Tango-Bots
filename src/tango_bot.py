@@ -50,6 +50,7 @@ class TangBotController:
             self.usb.write(chr(0x83).encode())
 
         self.writeCmd(BotServos.RightWheel.value, self.SPEED_START)
+        time.sleep(.2)
         self.writeCmd(BotServos.LeftWheel.value, self.SPEED_START)
 
     # Stop the robot
