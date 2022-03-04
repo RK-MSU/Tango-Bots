@@ -79,6 +79,9 @@ class KeyBindings:
         elif event.char == 'c':
             log.debug('Key Pressed: "%s"', '<C>')
             self.bot.moveWaistRight()
+        elif event.char == 'x':
+            log.debug('Key Pressed: "%s"', '<x>')
+            self.bot.centerWaist()
 
     def head(self, event=None):
         if event.char == 'w':

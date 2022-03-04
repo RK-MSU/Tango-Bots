@@ -81,7 +81,6 @@ class TangBotController:
         # print('Trying to stop motors')
         self.writeCmd(BotServos.RightWheel.value, self.SPEED_START)
         self.writeCmd(BotServos.LeftWheel.value, self.SPEED_START)
-        time.sleep(.2)
 
     def moveWaistLeft(self):
         self.WAIST_VAL += self.SPEED
@@ -93,7 +92,12 @@ class TangBotController:
         self.WAIST_VAL -= self.SPEED
         log.debug('Move Waist Right - Value: "%s"', self.WAIST_VAL)
         self.writeCmd(BotServos.Waist.value, self.WAIST_VAL)
-        time.sleep(.2)
+
+    def centerWaist(self):
+        self.WAIST_VAL = self.TARGET_CENTER
+        log.debug('Center - Value: "%s"', self.WAIST_VAL)
+        self.writeCmd(BotServos.Waist.value, self.WAIST_VAL)
+
 
     def moveHeadUp(self):
         self.HEAD_TILT_VAL += self.SPEED
