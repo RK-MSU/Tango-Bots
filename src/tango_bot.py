@@ -207,7 +207,7 @@ class TangBotController:
         self.turning_right = True
         self.turning_right_start_time = time.time()
 
-        while self.turning_right_start_time + self.turning_timeout < time.time():
+        while self.turning_right_start_time + self.turning_timeout > time.time():
             self.writeCmd(BotServos.RightWheel.value, 5000)
             time.sleep(.2)
             self.stopMoving()
