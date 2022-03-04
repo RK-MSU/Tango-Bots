@@ -34,6 +34,7 @@ class KeyBindings:
         self.win.bind('<j>', self.speed)        # key code: 44
         self.win.bind('<k>', self.speed)        # key code: 45
         self.win.bind('<l>', self.speed)        # key code: 46
+        self.win.bind('<q>', self.stopRobot)
 
         def run(win: tk.Tk):
             try:
@@ -51,6 +52,11 @@ class KeyBindings:
             log.debug('KeyBindings::stop() - Can\'t invoke "destroy" command: application has been destroyed')
         self.bot.stop()
         sys.exit(0)
+
+    def stopRobot(self, event):
+        if event.keycode == 24:
+            log.debug('Key Pressed: "%s"', 'Q')
+            self.bot.stopMoving()
 
     def arrows(self, event=None):
         keycode = event.keycode
