@@ -71,6 +71,9 @@ class TangBotController:
         else:
             log.critical('Unable to write to USB - USB not connected')
 
+    def setSpeed(self, speed:int):
+        self.SPEED = speed
+
     def moveWaistLeft(self):
         self.WAIST_VAL += self.SPEED
         log.debug('Move Waist Left - Value: "%s"', self.WAIST_VAL)
