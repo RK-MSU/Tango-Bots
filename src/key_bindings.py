@@ -93,13 +93,13 @@ class KeyBindings:
         print("Keycode: ", keycode)
         if keycode == 44:
             log.debug('Key Pressed: "%s"', '<j>')
-            self.bot.SPEED = 800
+            self.bot.SPEED = 100
         elif keycode == 45:
             log.debug('Key Pressed: "%s"', '<k>')
             self.bot.SPEED = 500
         elif keycode == 46:
             log.debug('Key Pressed: "%s"', '<l>')
-            self.bot.SPEED = 200
+            self.bot.SPEED = 800
         elif keycode == 58:
             log.debug('Key Pressed: "%s"', '<m>')
             self.bot.stopMoving()
