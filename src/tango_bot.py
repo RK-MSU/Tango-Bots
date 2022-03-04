@@ -142,9 +142,9 @@ class TangBotController:
             self.WHEEL_SPEED = self.SPEED_CEILING
         self.writeCmd(BotServos.RightWheel.value, 6000)
         self.writeCmd(BotServos.LeftWheel.value, 6000)
-        time.sleep(.2)  # CHECK THAT THIS WORKS
-        self.writeCmd(BotServos.RightWheel.value, 7000)
-        self.writeCmd(BotServos.LeftWheel.value,  5000)# self.WHEEL_SPEED + self.SPEED)
+        time.sleep(.2)
+#        self.writeCmd(BotServos.RightWheel.value, 7000)
+        self.writeCmd(BotServos.LeftWheel.value,  5000)  # self.WHEEL_SPEED + self.SPEED)
 
     def turnRight(self):
         # self.WHEEL_SPEED += self.SPEED
@@ -157,8 +157,7 @@ class TangBotController:
             self.WHEEL_SPEED = self.SPEED_CEILING
         self.writeCmd(BotServos.RightWheel.value, 6000)
         self.writeCmd(BotServos.LeftWheel.value, 6000)
-        time.sleep(.2)  # CHECK THAT THIS WORKS
-
+        time.sleep(.2)
         self.writeCmd(BotServos.RightWheel.value, 5000)
-        self.writeCmd(BotServos.LeftWheel.value, 7000)
+#        self.writeCmd(BotServos.LeftWheel.value, 7000)
 # END
