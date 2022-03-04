@@ -90,6 +90,7 @@ class KeyBindings:
 
     def speed(self, event=None):
         keycode = event.keycode
+        print("Keycode: ", keycode)
         if keycode == 74:
             log.debug('Key Pressed: "%s"', '<j>')
             self.bot.SPEED = 800
