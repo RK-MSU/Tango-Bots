@@ -204,7 +204,7 @@ class TangBotController:
         self.direction_state = 'r'
 
 
-        self.writeCmd(BotServos.RightWheel.value, 5000)
+        self.writeCmd(BotServos.RightWheel.value, 4500)
         time.sleep(.2)
         self.stopMoving()
 
