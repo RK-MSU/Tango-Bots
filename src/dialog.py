@@ -57,6 +57,20 @@ class Command:
 
     def responseString(self):
         response_str = self.response
+
+        result = re.search(r'~([\w]+)', response_str)
+        if result is not None:
+            var_name = result.groups()[0]
+            var_value = self.getVariableValue(var_name)
+            # print(type(var_value))
+            # response_str = self.getVariableValue(var_name)
+            if isinstance(var_value, str):
+                response_str = var_value
+            elif isinstance(var_value, list):
+                random_number = random.randint(0, len(var_value)-1)
+                response_str = var_value[random_number]
+
+
         # is multi-valued response?
         result = re.search(r'\[.*\]', response_str)
         if result is not None:
@@ -75,12 +89,16 @@ class Command:
                     break
             random_number = random.randint(0, len(values)-1)
             response_str = values[random_number]
+
+
         # parse variables
         result_items = re.finditer(r'\$([\w]+)', response_str)
         if result_items is not None:
             for result in result_items:
                 var_value = self.getVariableValue(result.groups()[0])
                 response_str = response_str.replace(result.group(), var_value)
+
+
         return response_str
 
 class Variable:
