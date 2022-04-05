@@ -34,7 +34,7 @@ class Command:
             var_value = self.getVariableValue(var_name)
             if var_value is not None:
                 if isinstance(var_value, str):
-                    return var_value
+                    return self.responseString()
                 elif isinstance(var_value, list) and cmd in var_value:
                     return self.responseString()
         if self.command_has_vars is False:
