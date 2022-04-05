@@ -9,28 +9,29 @@ class Command:
     children: list = list()
     parent = None
     level: int = 0
-    command: str
+    arguement: str
     response: str
     command_has_vars: bool = False
 
     # constructor
-    def __init__(self, lvl, command: str, response: str):
+    def __init__(self, lvl, arguement: str, response: str):
         self.level = lvl
-        self.command = command
+        self.arguement = arguement
         self.response = response
-        if re.search("_", self.command):
+        if re.search("_", self.arguement):
             self.command_has_vars = True
+        # TODO: test response for multi variables
 
     # return false if it does not match
     # returns the response string if there is a match
     def matches(self, cmd: str):
         if self.command_has_vars is False:
-            if self.command == cmd:
+            if self.arguement == cmd:
                 return self.responseString()
             else:
                 return False
         # command has variables, so check them
-        temp_command_re = self.command.replace('_', '([\w]+)')
+        temp_command_re = self.arguement.replace('_', '([\w]+)')
         result = re.match(temp_command_re, cmd)
         if result is not None:
             vars = result.groups()
@@ -84,11 +85,24 @@ class Dialog:
 
     lines: list = list()
     commands: list = list()
+    commands_hierarchy: dict = dict()
     variables: dict = dict()
 
     def __init__(self, file: str = 'dialog.txt'):
         self.readFile(file)
         self.parseInstructions()
+        self.buildCommandHierarchy()
+
+    def __str__(self):
+        txt = ""
+        # txt += f"Lines: {self.lines}"
+        txt += 'Commands:\n'
+        for cmd in self.commands:
+            txt += f" - Level: {cmd.level}, Command: {cmd.arguement}, response: {cmd.response}, Num Children: {len(cmd.children)}\n"
+        txt += 'Variables:\n'
+        for v in self.variables.values():
+            txt += f' - Name: "{v.name}", Value: {v.value}\n'
+        return txt
 
     def readFile(self, file: str):
         if os.path.exists(file):
@@ -119,43 +133,59 @@ class Dialog:
             return
         last_command: Command = None
         for line in self.lines:
-            # TODO: parse environment variables - (i.e. take the form "~{var}:[params...]") - Example: ~greetings: [hello howdy "hi there"]
-            result = re.search(r'~([\w]+)\s*:\s*(.+)', line)
-            if result is not None:
-                grps = result.groups()
-                variable_name = grps[0]
-                variable_value = grps[1]
-                var = Variable(variable_name, variable_value)
-                self.variables[var.name] = var
-                continue
-            # parsing user commands - (i.e. take the form 'u#:(command):response')
-            result = re.search(r'(u\d*)\s*:\s*\(([\w\s~]+)\)\s*:\s*(.+)', line)
-            if result is not None:
-                grps = result.groups()
-                # get command level integer
-                lvl = 0
-                lvl_result = re.search(r'[u](\d+)', grps[0])
-                if lvl_result == None: lvl = 0
-                else:
-                    lvl_span = lvl_result.span()
-                    lvl = int(grps[0][lvl_span[0]+1:lvl_span[1]])
-                command_str = grps[1]
-                response_str = grps[2]
-                # create a new command
-                command = Command(lvl, command_str, response_str)
-                if last_command is not None and command.level == last_command.level:
-                    command.parent = last_command.parent
-                elif last_command is not None and command.level == last_command.level + 1:
-                    last_command.children.append(command)
-                    command.parent = last_command
-                last_command = command
-                if command.level == 0:
-                    self.commands.append(command)
+            # parse environment variable
+            if self.parseLineEnvironmentVariable(line): continue
+            self.parseLineCommand(line)
 
+    # parse environment variables - (i.e. take the form "~{var}:[params...]") - Example: ~greetings: [hello howdy "hi there"]
+    def parseLineEnvironmentVariable(self, line):
+        result = re.search(r'~([\w]+)\s*:\s*(.+)', line)
+        if result is None: return False
+        groups = result.groups()
+        var_name = groups[0]
+        var_value = groups[1]
+        env_variable = Variable(var_name, var_value)
+        self.variables[var_name] = env_variable
+        return True
 
-if __name__ == '__main__':
-    cmd = Command(0, 'my name is _', 'hello $name')
-    input_str = 'my name is River'
-    print(cmd.matches(input_str))
+    def parseLineCommand(self, line):
+        result = re.search(r'(u\d*)\s*:\s*\(([\w\s~]+)\)\s*:\s*(.+)', line)
+        if result is None:
+            log.error('Invalid Command: %s', line)
+            return
+        # get the regular expression result groups
+        groups = result.groups()
+
+        # command components
+        command_level = groups[0]
+        command_arg = groups[1]
+        command_response = groups[2]
+
+        # get command_level integer
+        command_level_result = re.search(r'[u](\d+)', command_level)
+        if command_level_result is None:
+            command_level = 0
+        else:
+            cmd_level_span = command_level_result.span()
+            command_level = int(command_level[cmd_level_span[0]+1: cmd_level_span[1]])
+
+        # # create a new command
+        command = Command(command_level, command_arg, command_response)
+        self.commands.append(command)
+
+    def buildCommandHierarchy(self):
+        for index, item in enumerate(self.commands):
+            self.commands[index].children = list()
+            cmd: Command = self.commands[index]
+            if cmd.level == 0:
+                self.commands_hierarchy[cmd.arguement] = cmd
+            else:
+                parent_index = index
+                parent_command : Command = self.commands[parent_index]
+                while parent_command.level >= cmd.level:
+                    parent_command = self.commands[parent_index]
+                    parent_index -= 1
+                parent_command.children.append(cmd)
+                cmd.parent = parent_command
 
 # END
