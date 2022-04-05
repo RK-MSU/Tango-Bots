@@ -10,7 +10,7 @@ class Command:
     level: int = 0
     command: str
     response: str
-    def __init__(self, lvl: int, command: str, response: str):
+    def __init__(self, lvl, command: str, response: str):
         self.level = lvl
         self.command = command
         self.response = response
@@ -53,6 +53,8 @@ class Dialog:
         if len(self.lines) < 1:
             return
         for line in self.lines:
+            # TODO: parse environment variables - (i.e. take the form "~{var}:[params...]") - Example: ~greetings: [hello howdy "hi there"]
+            # parsing user commands - (i.e. take the form 'u#:(command):response')
             result = re.search(r'(u\d*)\s*:\s*\(([\w\s~]+)\)\s*:\s*(.+)', line)
             if result is not None:
                 grps = result.groups()
