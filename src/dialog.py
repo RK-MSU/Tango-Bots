@@ -2,6 +2,7 @@
 
 import os
 import re
+import random
 from .log import log
 
 class Command:
@@ -22,7 +23,6 @@ class Command:
         self.getVariableValue = getVariableValue
         if re.search("_", self.arguement):
             self.command_has_vars = True
-        # TODO: test response for multi variables
 
     # return None if it does not match
     # returns the response string if there is a match
@@ -37,7 +37,6 @@ class Command:
                     return var_value
                 elif isinstance(var_value, list) and cmd in var_value:
                     return self.responseString()
-            print(var_name)
         if self.command_has_vars is False:
             if self.arguement == cmd:
                 return self.responseString()
@@ -45,21 +44,43 @@ class Command:
                 return None
         # command has variables, so check them
         temp_command_re = self.arguement.replace('_', '([\w]+)')
-        result = re.match(temp_command_re, cmd)
-        if result is not None:
-            vars = result.groups()
-            return self.responseString(vars)
+        cmd_var_result = re.match(temp_command_re, cmd)
+        if cmd_var_result is not None:
+            response_var_result = re.search(r'\$([\w]+)', self.response)
+            cmd_vars = cmd_var_result.groups()
+            response_vars = response_var_result.groups()
+            for index, i in enumerate(response_vars):
+                self.setVariable(i, cmd_vars[index])
+            return self.responseString()
         else:
             return None
 
-    def responseString(self, vars: tuple = None):
+    def responseString(self):
         response_str = self.response
-        vars_count = 0
-        while True:
-            result = re.search('(\$[\w]+)', response_str)
-            if result is None: break
-            response_str = response_str.replace(result.groups()[0], vars[vars_count])
-            vars_count += 1
+        # is multi-valued response?
+        result = re.search(r'\[.*\]', response_str)
+        if result is not None:
+            response_str = response_str.strip('[]')
+            values = list()
+            while True:
+                result = re.match(r'([a-zA-Z]+)', response_str)
+                if result is None:
+                    result = re.match(r'"([a-zA-Z\s]+)"', response_str)
+                if result is None:
+                    break
+                span = result.span()
+                values.append(result.groups()[0])
+                response_str = response_str[span[1]:].strip()
+                if len(response_str) < 1:
+                    break
+            random_number = random.randint(0, len(values)-1)
+            response_str = values[random_number]
+        # parse variables
+        result_items = re.finditer(r'\$([\w]+)', response_str)
+        if result_items is not None:
+            for result in result_items:
+                var_value = self.getVariableValue(result.groups()[0])
+                response_str = response_str.replace(result.group(), var_value)
         return response_str
 
 class Variable:

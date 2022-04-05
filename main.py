@@ -31,5 +31,9 @@ if __name__ == "__main__":
         tk_app.mainloop()
     elif args.app == 'dialog':
         dialog = Dialog()
+        try:
+            dialog.run()
+        except KeyboardInterrupt:
+            pass
 
 # END main.py
