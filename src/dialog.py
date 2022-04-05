@@ -14,22 +14,35 @@ class Command:
     command_has_vars: bool = False
 
     # constructor
-    def __init__(self, lvl, arguement: str, response: str):
+    def __init__(self, lvl, arguement: str, response: str, setVariable, getVariableValue):
         self.level = lvl
         self.arguement = arguement
         self.response = response
+        self.setVariable = setVariable
+        self.getVariableValue = getVariableValue
         if re.search("_", self.arguement):
             self.command_has_vars = True
         # TODO: test response for multi variables
 
-    # return false if it does not match
+    # return None if it does not match
     # returns the response string if there is a match
     def matches(self, cmd: str):
+        # is the command a variable
+        result = re.match(r'~([\w]+)', self.arguement)
+        if result is not None:
+            var_name = result.groups()[0]
+            var_value = self.getVariableValue(var_name)
+            if var_value is not None:
+                if isinstance(var_value, str):
+                    return var_value
+                elif isinstance(var_value, list) and cmd in var_value:
+                    return self.responseString()
+            print(var_name)
         if self.command_has_vars is False:
             if self.arguement == cmd:
                 return self.responseString()
             else:
-                return False
+                return None
         # command has variables, so check them
         temp_command_re = self.arguement.replace('_', '([\w]+)')
         result = re.match(temp_command_re, cmd)
@@ -37,7 +50,7 @@ class Command:
             vars = result.groups()
             return self.responseString(vars)
         else:
-            return False
+            return None
 
     def responseString(self, vars: tuple = None):
         response_str = self.response
@@ -63,9 +76,9 @@ class Variable:
         if re.search(r'\[.*\]', self.value) is not None:
             self.value = self.value.strip('[]')
             self.multi_value = True
-            self.getMulitValues()
+            self.parseMulitValues()
 
-    def getMulitValues(self):
+    def parseMulitValues(self):
         values = list()
         while True:
             result = re.match(r'([a-zA-Z]+)', self.value)
@@ -80,12 +93,15 @@ class Variable:
                 break
         self.value = values
 
+    def getValue(self):
+        return self.value
 
 class Dialog:
 
     lines: list = list()
     commands: list = list()
     commands_hierarchy: dict = dict()
+    active_command : Command = None
     variables: dict = dict()
 
     def __init__(self, file: str = 'dialog.txt'):
@@ -103,6 +119,22 @@ class Dialog:
         for v in self.variables.values():
             txt += f' - Name: "{v.name}", Value: {v.value}\n'
         return txt
+
+    def run(self):
+        while True:
+            user_input = input(' > ')
+            self.handleInput(user_input)
+
+    def handleInput(self, input_cmd):
+        if self.active_command is None:
+            result = None
+            for key, cmd in self.commands_hierarchy.items():
+                result = cmd.matches(input_cmd)
+                if result is not None: break
+            if result is None:
+                log.error('Invalid input: "%s"', input_cmd)
+            else:
+                print(result)
 
     def readFile(self, file: str):
         if os.path.exists(file):
@@ -128,6 +160,16 @@ class Dialog:
         else:
             log.critical('Unable to open "%s"', file)
 
+    def setVariable(self, name, value):
+        var = Variable(name, value)
+        self.variables[var.name] = var
+
+    def getVariableValue(self, name):
+        if name not in self.variables:
+            return None
+        var = self.variables[name]
+        return var.getValue()
+
     def parseInstructions(self):
         if len(self.lines) < 1:
             return
@@ -144,8 +186,7 @@ class Dialog:
         groups = result.groups()
         var_name = groups[0]
         var_value = groups[1]
-        env_variable = Variable(var_name, var_value)
-        self.variables[var_name] = env_variable
+        self.setVariable(var_name, var_value)
         return True
 
     def parseLineCommand(self, line):
@@ -170,7 +211,8 @@ class Dialog:
             command_level = int(command_level[cmd_level_span[0]+1: cmd_level_span[1]])
 
         # # create a new command
-        command = Command(command_level, command_arg, command_response)
+        command = Command(command_level, command_arg, command_response, getattr(self, 'setVariable'), getattr(self, 'getVariableValue'))
+
         self.commands.append(command)
 
     def buildCommandHierarchy(self):
