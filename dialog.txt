@@ -1,5 +1,5 @@
 # comments are ignored
-~greetings: [hello howdy "hi there"]
+~greetings: [hello howdy "hi there"] # comments are ignored
 u:(~greetings):[hi hello "what up" sup]
     u1:(you):good
         u1:(and):[one two]
