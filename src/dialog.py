@@ -147,15 +147,27 @@ class Dialog:
             self.handleInput(user_input)
 
     def handleInput(self, input_cmd):
-        if self.active_command is None:
-            result = None
+        result = None
+        if self.active_command is not None:
+            for cmd in self.active_command.children:
+                result = cmd.matches(input_cmd)
+                if result is not None:
+                    if len(cmd.children) > 0:
+                        self.active_command = cmd
+                    break
+        if result is None:
             for key, cmd in self.commands_hierarchy.items():
                 result = cmd.matches(input_cmd)
-                if result is not None: break
-            if result is None:
-                log.error('Invalid input: "%s"', input_cmd)
-            else:
-                print(result)
+                if result is not None:
+                    if len(cmd.children) > 0:
+                        self.active_command = cmd
+                    else:
+                        self.active_command = None
+                    break
+        if result is None:
+            log.error('Invalid input: "%s"', input_cmd)
+        else:
+            print(result)
 
     def readFile(self, file: str):
         if os.path.exists(file):
