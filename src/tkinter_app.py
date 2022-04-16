@@ -2,7 +2,7 @@
 
 import tkinter as tk
 from tkinter import ttk
-from turtle import bgcolor, speed
+from tkinter.messagebox import showerror, showwarning, showinfo
 from PIL import Image, ImageTk
 from typing import List
 import threading
@@ -713,58 +713,14 @@ class TkinterApp(tk.Tk):
     # constructor
     def __init__(self):
         super().__init__()
-
         # ttk styles
-        self.style = ttk.Style(self)
-        self.style.configure('.', font=('Helvetica', 12)) # Helvetica
-        # self.style.configure('TFrame', font=('Helvetica', 12)) # Helvetica
-        self.style.configure('EventContainer.TFrame', background='white') # Helvetica
-
-        self.style.configure('EventsDisplay.TFrame', background='white')
-        self.style.configure('EventInput.TEntry', font=('Helvetica', 20))
-
-        # window protocols
-        # make the top right close button
-        self.protocol('WM_DELETE_WINDOW', self.stop)
-
+        self.__ttkStyleSetup()
         # window settings
-        # title
-        self.title('Tango Bot')
-
-        # window size/position
-        min_width = 300
-        min_height = 200
-        self.minsize(min_width, min_height)
-        self.resizable(True, True)
-        # get the screen dimension
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        window_width = int(screen_width / 4)
-        window_height = int(screen_height / 2)
-        # find the center point
-        # center_x = int(screen_width/2 - window_width / 2)
-        # center_y = int(screen_height/2 - window_height / 2)
-        center_x = 0
-        center_y = 0
-        # set the position of the window to the center of the screen
-        self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-        # main frame
-        # self.main_frame = MainFrame(self)
-
-        # menubar
-        self.menu_bar = tk.Menu(self, font=('Helvetica', 12))
-        self.config(menu=self.menu_bar)
-        # file_menu
-        file_menu = tk.Menu(self.menu_bar, tearoff=0, font=('Helvetica', 12))
-        # add the File menu to the menubar
-        self.menu_bar.add_cascade(label="File", menu=file_menu)
-        # add file_menu items
-        file_menu.add_command(label='Play', command=runEvents)
-        file_menu.add_command(label='Clear', command=cleanEvents)
-        file_menu.add_separator()
-        file_menu.add_command(label='Exit', command=self.stop)
-
-        # main frame
+        self.__appWindowSettingsSetup()
+        # protocols
+        self.__protocolSetup()
+        # menu bar
+        # self.__menubarSetup()
         self.main_frame = MainFrame(self)
         self.active_view = self.main_frame
 
@@ -786,6 +742,51 @@ class TkinterApp(tk.Tk):
         self.active_view.destroy()
         self.main_frame.pack(expand=True, fill='both')
         self.active_view = self.main_frame
+
+    def __ttkStyleSetup(self):
+        self.style = ttk.Style(self)
+        self.style.configure('.', font=('Helvetica', 12)) # Helvetica
+        self.style.configure('EventContainer.TFrame', background='white') # Helvetica
+        self.style.configure('EventsDisplay.TFrame', background='white')
+        self.style.configure('EventInput.TEntry', font=('Helvetica', 20))
+
+    def __appWindowSettingsSetup(self):
+        # title
+        self.title('Tango Bot')
+        # window size/position
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        min_width = 300
+        min_height = 200
+        self.minsize(min_width, min_height)
+        self.resizable(True, True)
+        # get the screen dimension
+        window_width = int(screen_width / 4)
+        window_height = int(screen_height / 2)
+        # find the center point
+        # center_x = int(screen_width/2 - window_width / 2)
+        # center_y = int(screen_height/2 - window_height / 2)
+        center_x = 0
+        center_y = 0
+        # set the position of the window to the center of the screen
+        self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+
+    def __protocolSetup(self):
+        # make the top right close button
+        self.protocol('WM_DELETE_WINDOW', self.stop)
+
+    def __menubarSetup(self):
+        self.menu_bar = tk.Menu(self, font=('Helvetica', 12))
+        self.config(menu=self.menu_bar)
+        # file_menu
+        file_menu = tk.Menu(self.menu_bar, tearoff=0, font=('Helvetica', 12))
+        # add the File menu to the menubar
+        self.menu_bar.add_cascade(label="File", menu=file_menu)
+        # add file_menu items
+        file_menu.add_command(label='Play', command=runEvents)
+        file_menu.add_command(label='Clear', command=cleanEvents)
+        file_menu.add_separator()
+        file_menu.add_command(label='Exit', command=self.stop)
 
 APP_INST: TkinterApp = None
 TANGO_BOT: TangBotController = TangBotController()
