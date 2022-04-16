@@ -704,7 +704,10 @@ class MainFrame(ttk.Frame):
         self.pack(expand=True, fill='both')
 
 class TkinterApp(tk.Tk):
-
+    # properties
+    __TITLE                 = 'TangoBot'    # Window Title
+    __RESIZEABLE_WIDTH      = True          # Can the width of the window be resized
+    __RESIZEABLE_HEIGHT     = True          # Can the height of the window be resized
     style: ttk.Style
     menu_bar: tk.Menu
     main_frame: MainFrame
@@ -743,6 +746,14 @@ class TkinterApp(tk.Tk):
         self.main_frame.pack(expand=True, fill='both')
         self.active_view = self.main_frame
 
+    @property
+    def screen_width(self):
+        return self.winfo_screenwidth()
+
+    @property
+    def screen_height(self):
+        return self.winfo_screenheight()
+
     def __ttkStyleSetup(self):
         self.style = ttk.Style(self)
         self.style.configure('.', font=('Helvetica', 12)) # Helvetica
@@ -752,20 +763,13 @@ class TkinterApp(tk.Tk):
 
     def __appWindowSettingsSetup(self):
         # title
-        self.title('Tango Bot')
+        self.title(self.__TITLE)
         # window size/position
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        min_width = 300
-        min_height = 200
-        self.minsize(min_width, min_height)
-        self.resizable(True, True)
+        self.resizable(self.__RESIZEABLE_WIDTH, self.__RESIZEABLE_HEIGHT)
         # get the screen dimension
-        window_width = int(screen_width / 4)
-        window_height = int(screen_height / 2)
+        window_width = int(self.screen_width / 4)
+        window_height = self.screen_height
         # find the center point
-        # center_x = int(screen_width/2 - window_width / 2)
-        # center_y = int(screen_height/2 - window_height / 2)
         center_x = 0
         center_y = 0
         # set the position of the window to the center of the screen
