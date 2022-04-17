@@ -39,6 +39,8 @@ class BotEventType(Enum):
 class BotEventFrame(ttk.Frame):
     # properties
     details_frame: ttk.Frame
+    delete_image: ImageTk.PhotoImage
+    edit_image: ImageTk.PhotoImage
     up_button: ttk.Button
     down_button: ttk.Button
     delete_button: ttk.Button
@@ -54,14 +56,17 @@ class BotEventFrame(ttk.Frame):
         super().__init__(EVENTS_VIEW_PORT_FRAME)
         self.bot_event: BotEvent = bot_event
 
+        self.delete_image = fetchTkImage('./assets/bin.png')
+        self.edit_image = fetchTkImage('./assets/edit.png')
+
         # Event Number Label
         # ---------------------------------------
         self.event_number_label = ttk.Label(self, anchor=tk.CENTER)
 
         # Up/Down Button Controls
         # ---------------------------------------
-        self.up_button = ttk.Button(self)
-        self.down_button = ttk.Button(self)
+        self.up_button = ttk.Button(self, style='EventAction.TButton')
+        self.down_button = ttk.Button(self, style='EventAction.TButton')
         self.up_button.config(command=lambda : self.moveBotEventUp())
         self.down_button.config(command=lambda : self.moveBotEventDown())
         # button images
@@ -91,9 +96,9 @@ class BotEventFrame(ttk.Frame):
 
         # Event Commands
         # ---------------------------------------
-        self.delete_button = ttk.Button(self, text='Delete')
+        self.delete_button = ttk.Button(self, image=self.delete_image, style='EventAction.TButton')
+        self.edit_button = ttk.Button(self, image=self.edit_image, style='EventAction.TButton')
         self.delete_button.config(command=lambda : self.deleteBotEvent())
-        self.edit_button = ttk.Button(self, text='edit')
         self.edit_button.config(command=lambda : self.editBotEvent())
 
         # Add items
@@ -380,8 +385,8 @@ class EventSettingsFrame(ttk.Frame):
         self.time_entry.config(disabledbackground="white")
         self.time_entry.config(disabledforeground="black")
         # time up/down buttons
-        self.time_up_button = ttk.Button(self.time_input_frame, text='Up', command=self.increaseTimeValue)
-        self.time_down_button = ttk.Button(self.time_input_frame, text='Down', command=self.decreaseTimeValue)
+        self.time_up_button = ttk.Button(self.time_input_frame, text='Up', command=lambda : self.increaseTimeValue())
+        self.time_down_button = ttk.Button(self.time_input_frame, text='Down', command=lambda : self.decreaseTimeValue())
         # add input_frame items
         self.time_entry.grid(column=0, row=0, rowspan=2, sticky=tk.NS)
         self.time_up_button.grid(column=1, row=0)
@@ -389,9 +394,9 @@ class EventSettingsFrame(ttk.Frame):
 
         # step inputs
         self.step_input_frame = ttk.Frame(self)
-        speed_one_option = ttk.Radiobutton(self.step_input_frame, text='Level One', value=1, variable=self.step_selection, command=self.stepValueChange)
-        speed_two_option = ttk.Radiobutton(self.step_input_frame, text='Level Two', value=2, variable=self.step_selection, command=self.stepValueChange)
-        speed_three_option = ttk.Radiobutton(self.step_input_frame, text='Level Three', value=3, variable=self.step_selection, command=self.stepValueChange)
+        speed_one_option = ttk.Radiobutton(self.step_input_frame, text='Level One', value=1, variable=self.step_selection, command=lambda : self.stepValueChange())
+        speed_two_option = ttk.Radiobutton(self.step_input_frame, text='Level Two', value=2, variable=self.step_selection, command=lambda : self.stepValueChange())
+        speed_three_option = ttk.Radiobutton(self.step_input_frame, text='Level Three', value=3, variable=self.step_selection, command=lambda : self.stepValueChange())
         ttk.Label(self.step_input_frame, text='What level of speed?').pack(anchor='w')
         speed_one_option.pack(anchor='w')
         speed_two_option.pack(anchor='w')
@@ -405,8 +410,8 @@ class EventSettingsFrame(ttk.Frame):
         self.text_input.pack()
 
         self.settings_actions_frame = ttk.Frame(self)
-        save_button = ttk.Button(self.settings_actions_frame, text='Save', command=self.saveButtonAction)
-        cancel_button = ttk.Button(self.settings_actions_frame, text='Cancel', command=self.cancelButtonAction)
+        save_button = ttk.Button(self.settings_actions_frame, text='Save', command=lambda : self.saveButtonAction())
+        cancel_button = ttk.Button(self.settings_actions_frame, text='Cancel', command=lambda : self.cancelButtonAction())
         save_button.grid(column=0, row=0)
         cancel_button.grid(column=1, row=0)
         self.settings_actions_frame.grid(column=0, row=10)
@@ -502,11 +507,9 @@ class EventControlsSettingsFrame(ttk.Frame):
 
         self.action_buttons_frame = ttk.Frame(self)
 
-        self.save_button = ttk.Button(self.action_buttons_frame, text='Save')
         self.cancel_button = ttk.Button(self.action_buttons_frame, text='Cancel')
         self.cancel_button.config(command=lambda : APP_INST.showFrame('main'))
-        self.save_button.grid(column=0, row=0)
-        self.cancel_button.grid(column=1, row=0)
+        self.cancel_button.grid(column=0, row=0)
 
         self.title_label.grid(column=0, row=0, pady=10)
         self.action_buttons_frame.grid(column=0, row=2, pady=10)
@@ -799,6 +802,7 @@ class TkinterApp(tk.Tk):
         self.style.configure('EventContainer.TFrame', background='white') # Helvetica
         self.style.configure('EventsDisplay.TFrame', background='white')
         self.style.configure('EventInput.TEntry', font=('Helvetica', 20))
+        self.style.configure('EventAction.TButton', relief='flat')
 
     def __appWindowSettingsSetup(self):
         # title
