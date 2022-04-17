@@ -634,6 +634,7 @@ class MainFrame(ttk.Frame):
         self.speech2text_button = ttk.Button(self.toolbar_frame, image=self.mic_image)
         self.clear_button = ttk.Button(self.toolbar_frame, image=self.clear_image)
         # button commands
+        self.play_button.config(command=lambda : runEvents())
         self.head_button.config(command=lambda : APP_INST.showFrame('new_head_event'))
         self.waist_button.config(command=lambda : APP_INST.showFrame('new_waist_event'))
         self.wheels_button.config(command=lambda : APP_INST.showFrame('new_wheel_event'))
@@ -733,6 +734,20 @@ class MainFrame(ttk.Frame):
             for event in EVENTS_DATA: event.widget.destroy()
             EVENTS_DATA = list()
 
+class RunningEventsProgressFrame(ttk.Frame):
+    progressbar: ttk.Progressbar
+    stop_button : ttk.Button
+
+    # constructor
+    def __init__(self, container):
+        super().__init__(container)
+
+        self.progressbar = ttk.Progressbar(self, orient='horizontal', mode='determinate', length=300)
+        self.progressbar.pack()
+
+        self.stop_button = ttk.Button(self, text='Stop', command= lambda : APP_INST.showFrame('main'))
+        self.stop_button.pack()
+
 class TkinterApp(tk.Tk):
     # properties
     __TITLE                 = 'TangoBot'    # Window Title
@@ -761,6 +776,7 @@ class TkinterApp(tk.Tk):
         self.frames['new_wheel_event'] = WheelEventSettingsFrame(self)
         # TODO - implement Speech2Text event settings frame
         self.frames['event_settings'] = EventSettingsFrame(self)
+        self.frames['running_events'] = RunningEventsProgressFrame(self)
         self.active_frame = self.frames['main']
         self.packActiveFrame()
 
@@ -834,12 +850,24 @@ def runEventsThreadFnc():
     RUN_EVENTS_THREAD = None
 
 def runEvents():
-    global RUN_EVENTS_THREAD
-    if RUN_EVENTS_THREAD is not None:
-        print('Already Running...')
-        return
-    RUN_EVENTS_THREAD = threading.Thread(target=runEventsThreadFnc, daemon=True)
-    RUN_EVENTS_THREAD.start()
+    APP_INST.showFrame('running_events')
+    APP_INST.update_idletasks()
+    APP_INST.update()
+    pg_value = 0
+    while pg_value <= 100:
+        APP_INST.frames['running_events'].progressbar['value'] = pg_value
+        pg_value += 20
+        APP_INST.update_idletasks()
+        APP_INST.update()
+        sleep(0.5)
+    showinfo(message='Finished Running!')
+    APP_INST.showFrame('main')
+    # global RUN_EVENTS_THREAD
+    # if RUN_EVENTS_THREAD is not None:
+    #     print('Already Running...')
+    #     return
+    # RUN_EVENTS_THREAD = threading.Thread(target=runEventsThreadFnc, daemon=True)
+    # RUN_EVENTS_THREAD.start()
 
 def stopRobot():
     print('Stop Robot')
