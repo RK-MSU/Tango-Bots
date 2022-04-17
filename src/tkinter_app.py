@@ -510,49 +510,6 @@ class EventSettingsFrame(ttk.Frame):
     def cancelButtonAction(self):
         APP_INST.showMainFrame()
 
-class RobotSpeakSettingsFrame(ttk.Frame):
-    # properties
-    bot_event : BotEvent = None
-    event_type: BotEventType = None
-    text_input: tk.Text
-
-    # constructor
-    # TODO - hande event_type v.s. bot_event
-    def __init__(self, bot_event: BotEvent = None, event_type: BotEventType = None):
-        super().__init__(APP_INST)
-        self.event_type = event_type
-        self.text_variable = tk.StringVar()
-
-        self.settings_label = ttk.Label(self)
-        self.settings_label.config(text='Event Settings: %s' % self.event_type.value)
-
-
-        self.prompt_label = ttk.Label(self, text='Input text for the robot to say.')
-        self.text_input = tk.Text(self)
-
-        settings_actions_frame = ttk.Frame(self)
-        save_button = ttk.Button(settings_actions_frame, text='Save', command=self.saveButtonAction)
-        cancel_button = ttk.Button(settings_actions_frame, text='Cancel', command=self.cancelButtonAction)
-        save_button.grid(column=0, row=0)
-        cancel_button.grid(column=1, row=0)
-
-
-        self.settings_label.pack()
-        self.prompt_label.pack()
-        self.text_input.pack()
-        settings_actions_frame.pack()
-        self.pack()
-
-    def saveButtonAction(self):
-        if self.bot_event is None:
-            self.bot_event = BotEvent(event_type=self.event_type)
-            self.bot_event.speak_text = self.text_input.get('1.0','end')
-        self.bot_event.createWidget()
-        APP_INST.showMainFrame()
-
-    def cancelButtonAction(self):
-        APP_INST.showMainFrame()
-
 class EventControlsSettingsFrame(ttk.Frame):
 
     title_label: ttk.Label
@@ -644,20 +601,6 @@ class WheelEventSettingsFrame(EventControlsSettingsFrame):
         self.action_buttons_frame.left_button.config(command=lambda : self.newBotEventSettings(BotEventType.TurnLeft))
         self.action_buttons_frame.right_button.config(command=lambda : self.newBotEventSettings(BotEventType.TurnRight))
         self.action_buttons_frame.center_button.config(command=lambda : self.newBotEventSettings(BotEventType.Stop))
-
-class SpeakEventSettingsFrame(EventControlsSettingsFrame):
-     # constructor
-    def __init__(self, container):
-        super().__init__(container)
-        self.title_label.config(text='Speak Event')
-
-        self.action_buttons_frame = ttk.Frame(self)
-        self.action_buttons_frame.grid(column=0, row=1)
-
-        ttk.Label(self.action_buttons_frame, text='Input what you want the robot to say').pack()
-
-        self.text = tk.Text(self.action_buttons_frame, height=5)
-        self.text.pack()
 
 class MainFrame(ttk.Frame):
     # toolbar properties
@@ -831,7 +774,6 @@ class TkinterApp(tk.Tk):
         self.frames['new_head_event'] = HeadEventSettingsFrame(self)
         self.frames['new_waist_event'] = WaistEventSettingsFrame(self)
         self.frames['new_wheel_event'] = WheelEventSettingsFrame(self)
-        self.frames['new_speak_event'] = SpeakEventSettingsFrame(self)
         # TODO - implement Speech2Text event settings frame
         self.frames['event_settings'] = EventSettingsFrame(self)
         self.active_frame = self.frames['main']
