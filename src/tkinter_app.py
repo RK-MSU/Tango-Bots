@@ -43,12 +43,12 @@ class BotEventFrame(ttk.Frame):
     up_button: ttk.Button
     down_button: ttk.Button
     delete_button: ttk.Button
+    edit_button: ttk.Button
     event_number_label: ttk.Label
     event_type_label: ttk.Label
     time_details_label: ttk.Label
     step_level_details_label: ttk.Label
     speak_text_details_label: ttk.Label
-
 
     # constructor
     def __init__(self, bot_event):
@@ -57,14 +57,14 @@ class BotEventFrame(ttk.Frame):
 
         # Event Number Label
         # ---------------------------------------
-        self.event_number_label = ttk.Label(self, text=self.event_num, anchor=tk.CENTER)
+        self.event_number_label = ttk.Label(self, anchor=tk.CENTER)
 
         # Up/Down Button Controls
         # ---------------------------------------
         self.up_button = ttk.Button(self)
         self.down_button = ttk.Button(self)
-        self.up_button.config(command=lambda x = self.bot_event : moveEventUp(x))
-        self.down_button.config(command=lambda x = self.bot_event : moveEventDown(x))
+        self.up_button.config(command=lambda : self.moveBotEventUp())
+        self.down_button.config(command=lambda : self.moveBotEventDown())
         # button images
         self.up_image = fetchTkImage('./assets/arrow.png', size=15)
         self.down_image = fetchTkImage('./assets/arrow.png', size=15, transpose=Image.ROTATE_180)
@@ -80,28 +80,31 @@ class BotEventFrame(ttk.Frame):
         self.event_type_label.config(anchor=tk.W)
         self.event_type_label.pack(expand=True, fill='x')
         # time interval details
-        if self.bot_event.time_interval is not None:
-            self.time_details_label = ttk.Label(self.details_frame)
-            self.time_details_label.config(text="Time: %s seconds" % self.bot_event.time_interval)
-            self.time_details_label.config(anchor=tk.W)
-            self.time_details_label.pack(expand=True, fill='x')
+        # if self.bot_event.time_interval is not None:
+        self.time_details_label = ttk.Label(self.details_frame)
+        self.time_details_label.config(text="Time: %s seconds" % self.bot_event.time_interval)
+        self.time_details_label.config(anchor=tk.W)
+        # self.time_details_label.pack(expand=True, fill='x')
         # Speed (step) Level Label
-        if self.bot_event.speed_step is not None:
-            self.step_level_details_label = ttk.Label(self.details_frame)
-            self.step_level_details_label.config(text='Speed Level: %s' % self.bot_event.speed_step)
-            self.step_level_details_label.config(anchor=tk.W)
-            self.step_level_details_label.pack(expand=True, fill='x')
+        # if self.bot_event.speed_step is not None:
+        self.step_level_details_label = ttk.Label(self.details_frame)
+        self.step_level_details_label.config(text='Speed Level: %s' % self.bot_event.speed_step)
+        self.step_level_details_label.config(anchor=tk.W)
+        # self.step_level_details_label.pack(expand=True, fill='x')
         # Robot Speak Text
-        if self.bot_event.speak_text is not None:
-            self.speak_text_details_label = ttk.Label(self.details_frame)
-            self.speak_text_details_label.config(text="Text: \"%s\"" % self.bot_event.speak_text)
-            self.speak_text_details_label.pack()
+        # if self.bot_event.speak_text is not None:
+        self.speak_text_details_label = ttk.Label(self.details_frame)
+        self.speak_text_details_label.config(text="Text: \"%s\"" % self.bot_event.speak_text)
+        # self.speak_text_details_label.pack()
 
 
         # Event Commands
         # ---------------------------------------
         self.delete_button = ttk.Button(self, text='Delete')
-        self.delete_button.config(command=lambda x=self.bot_event : deleteEvent(x))
+        self.delete_button.config(command=lambda : self.deleteBotEvent())
+        self.edit_button = ttk.Button(self, text='edit')
+        self.edit_button.config(command=lambda : self.editBotEvent())
+
 
 
         # Add items
@@ -111,11 +114,12 @@ class BotEventFrame(ttk.Frame):
         self.down_button.grid(column=1, row=1)
         self.details_frame.grid(column=2, row=0, rowspan=2, sticky=tk.NW, padx=5, pady=5)
         self.delete_button.grid(column=3, row=0, sticky=tk.E)
+        self.edit_button.grid(column=3, row=1, sticky=tk.E)
 
         self.columnconfigure(3, weight=1)
 
         # add self to parent
-        self.grid(column=0, row=self.row, sticky=tk.EW, padx=5, pady=5)
+        # self.grid(column=0, row=self.row, sticky=tk.EW, padx=5, pady=5)
 
     @property
     def row(self):
@@ -129,11 +133,60 @@ class BotEventFrame(ttk.Frame):
     def event_name(self):
         return self.bot_event.event_type.value
 
+    def render(self):
+        self.grid_forget()
+        self.time_details_label.pack_forget()
+        self.step_level_details_label.pack_forget()
+        self.speak_text_details_label.pack_forget()
+        self.edit_button.grid_forget()
+
+        self.event_number_label.config(text=self.event_num)
+
+        if self.bot_event.has_time_interval:
+            self.time_details_label.config(text="Time: %s seconds" % self.bot_event.time_interval)
+            self.time_details_label.pack()
+        if self.bot_event.has_speed_step:
+            self.step_level_details_label.config(text='Speed Level: %s' % self.bot_event.speed_step)
+            self.step_level_details_label.pack()
+
+        if self.bot_event.has_event_settings:
+            self.edit_button.grid(column=3, row=1, sticky=tk.E)
+
+        self.grid(column=0, row=self.row, sticky=tk.EW, padx=5, pady=5)
+
+    def deleteBotEvent(self):
+        self.grid_forget()
+        if self.bot_event in EVENTS_DATA:
+            EVENTS_DATA.remove(self.bot_event)
+        for event in EVENTS_DATA:
+            event.widget.render()
+        self.destroy()
+
+    def editBotEvent(self):
+        APP_INST.frames['event_settings'].bot_event = self.bot_event
+        APP_INST.showFrame('event_settings')
+
+    def moveBotEventUp(self):
+        row = self.row
+        if row < 1: return
+        new_row = row - 1
+        EVENTS_DATA.remove(self.bot_event)
+        EVENTS_DATA.insert(new_row, self.bot_event)
+        for event in EVENTS_DATA: event.widget.render()
+
+    def moveBotEventDown(self):
+        row = self.row
+        if len(EVENTS_DATA) - 1 <= row: return
+        new_row = row + 1
+        EVENTS_DATA.remove(self.bot_event)
+        EVENTS_DATA.insert(new_row, self.bot_event)
+        for event in EVENTS_DATA: event.widget.render()
+
 class BotEvent:
     # properties
     event_type: BotEventType
-    _time_interval: int = None
-    _speed_step: int = None
+    __time_interval: int = 1
+    __speed_step: int = 1
     speak_text: str = None
     widget: BotEventFrame = None
 
@@ -142,39 +195,71 @@ class BotEvent:
         self.event_type = event_type
         self.time_interval = time_interval
         self.speed_step = speed_step
-        global EVENTS_DATA
-        EVENTS_DATA.append(self)
-
-    @property
-    def time_interval(self):
-        return self._time_interval
-
-    @time_interval.setter
-    def time_interval(self, time):
-        self._time_interval = time
-
-    @property
-    def speed_step(self):
-        return self._speed_step
-
-    @speed_step.setter
-    def speed_step(self, step):
-        if step is None:
-            self._speed_step == None
-        else:
-            step = int(step)
-            possible_steps = [1, 2, 3]
-            if step not in possible_steps:
-                step = 1
-            self._speed_step = step
-
-    def createWidget(self):
         self.widget = BotEventFrame(bot_event=self)
+        # global EVENTS_DATA
+        # EVENTS_DATA.append(self)
 
     @property
     def row(self):
         global EVENTS_DATA
+        if self not in EVENTS_DATA:
+            return None
         return EVENTS_DATA.index(self)
+
+    @property
+    def has_time_interval(self):
+        valid_types = [
+            BotEventType.Forward,
+            BotEventType.Reverse
+        ]
+        if self.event_type in valid_types:
+            return True
+        return False
+
+    @property
+    def has_speed_step(self):
+        valid_types = [
+            BotEventType.Forward,
+            BotEventType.Reverse,
+            BotEventType.TurnLeft,
+            BotEventType.TurnRight,
+            BotEventType.WaistLeft,
+            BotEventType.WaistRight,
+            BotEventType.HeadUp,
+            BotEventType.HeadDown,
+            BotEventType.HeadLeft,
+            BotEventType.HeadRight
+        ]
+        if self.event_type in valid_types:
+            return True
+        return False
+
+    @property
+    def has_event_settings(self):
+        if self.has_time_interval or self.has_speed_step:
+            return True
+        return False
+
+    @property
+    def time_interval(self):
+        return self.__time_interval
+
+    @time_interval.setter
+    def time_interval(self, time):
+        if time is not None:
+            self.__time_interval = time
+
+    @property
+    def speed_step(self):
+        return self.__speed_step
+
+    @speed_step.setter
+    def speed_step(self, step):
+        if step is not None:
+            self.__speed_step = step
+
+    def createWidget(self):
+        self.widget = BotEventFrame(bot_event=self)
 
     # TODO - implement speed step
     # TODO - implement time_interval
@@ -312,35 +397,30 @@ class ArrowDirectionControlsFrame(ttk.Frame):
 
 class EventSettingsFrame(ttk.Frame):
     # properties
-    bot_event: BotEvent
-    show_time: bool
-    show_step: bool
+    __bot_event: BotEvent
+    settings_label: ttk.Label
     time_variable: tk.StringVar
     step_selection: tk.StringVar
     _time_value: int
     _step_value: int
 
     # constructor
-    def __init__(self, bot_event: BotEvent, show_time: bool = False, show_step: bool = False):
-        super().__init__(APP_INST)
-        self.bot_event = bot_event
-        self.show_time = show_time
-        self.show_step = show_step
+    def __init__(self, parent):
+        super().__init__(parent)
         self.time_variable = tk.StringVar()
         self.step_selection = tk.StringVar()
 
-        print(self.show_time)
-
-        self.time_value = 1
-        self.step_value = 1
+        # self.time_value = 1
+        # self.step_value = 1
         # TODO - if bot_event.time_interval is not None?
 
         self.settings_label = ttk.Label(self)
-        self.settings_label.config(text='Event Settings: %s' % self.bot_event.event_type.value)
+        self.settings_label.config(text='Event Settings')
+        self.settings_label.grid(column=0, row=0)
 
         # time entry
-        time_input_frame = ttk.Frame(self)
-        self.time_entry = tk.Entry(time_input_frame)
+        self.time_input_frame = ttk.Frame(self)
+        self.time_entry = tk.Entry(self.time_input_frame)
         self.time_entry.config(textvariable=self.time_variable)
         self.time_entry.config(justify='center')
         self.time_entry.config(font=('Helvetica', 15))
@@ -348,58 +428,77 @@ class EventSettingsFrame(ttk.Frame):
         self.time_entry.config(disabledbackground="white")
         self.time_entry.config(disabledforeground="black")
         # time up/down buttons
-        self.time_up_button = ttk.Button(time_input_frame, text='Up', command=self.increaseTimeValue)
-        self.time_down_button = ttk.Button(time_input_frame, text='Down', command=self.decreaseTimeValue)
-
-        # step inputs
-        step_input_frame = ttk.Frame(self)
-        speed_one_option = ttk.Radiobutton(step_input_frame, text='Level One', value=1, variable=self.step_selection, command=self.stepValueChange)
-        speed_two_option = ttk.Radiobutton(step_input_frame, text='Level Two', value=2, variable=self.step_selection, command=self.stepValueChange)
-        speed_three_option = ttk.Radiobutton(step_input_frame, text='Level Three', value=3, variable=self.step_selection, command=self.stepValueChange)
-        ttk.Label(step_input_frame, text='What level of speed?').pack(anchor='w')
-        speed_one_option.pack(anchor='w')
-        speed_two_option.pack(anchor='w')
-        speed_three_option.pack(anchor='w')
+        self.time_up_button = ttk.Button(self.time_input_frame, text='Up', command=self.increaseTimeValue)
+        self.time_down_button = ttk.Button(self.time_input_frame, text='Down', command=self.decreaseTimeValue)
         # add input_frame items
         self.time_entry.grid(column=0, row=0, rowspan=2, sticky=tk.NS)
         self.time_up_button.grid(column=1, row=0)
         self.time_down_button.grid(column=1, row=1)
+        # self.time_input_frame.grid(column=0, row=1)
 
-        settings_actions_frame = ttk.Frame(self)
-        save_button = ttk.Button(settings_actions_frame, text='Save', command=self.saveButtonAction)
-        cancel_button = ttk.Button(settings_actions_frame, text='Cancel', command=self.cancelButtonAction)
+
+        # step inputs
+        self.step_input_frame = ttk.Frame(self)
+        speed_one_option = ttk.Radiobutton(self.step_input_frame, text='Level One', value=1, variable=self.step_selection, command=self.stepValueChange)
+        speed_two_option = ttk.Radiobutton(self.step_input_frame, text='Level Two', value=2, variable=self.step_selection, command=self.stepValueChange)
+        speed_three_option = ttk.Radiobutton(self.step_input_frame, text='Level Three', value=3, variable=self.step_selection, command=self.stepValueChange)
+        ttk.Label(self.step_input_frame, text='What level of speed?').pack(anchor='w')
+        speed_one_option.pack(anchor='w')
+        speed_two_option.pack(anchor='w')
+        speed_three_option.pack(anchor='w')
+        # self.step_input_frame.grid(column=0, row=2)
+
+
+        self.settings_actions_frame = ttk.Frame(self)
+        save_button = ttk.Button(self.settings_actions_frame, text='Save', command=self.saveButtonAction)
+        cancel_button = ttk.Button(self.settings_actions_frame, text='Cancel', command=self.cancelButtonAction)
         save_button.grid(column=0, row=0)
         cancel_button.grid(column=1, row=0)
+        self.settings_actions_frame.grid(column=0, row=3)
 
-        # add items
-        self.settings_label.pack()
-        if self.show_time:
-            time_input_frame.pack()
-        if self.show_step:
-            step_input_frame.pack()
-        settings_actions_frame.pack()
+    @property
+    def bot_event(self):
+        return self.__bot_event
 
-        self.pack()
+    @bot_event.setter
+    def bot_event(self, bot_event: BotEvent):
+        self.__bot_event = bot_event
+        if bot_event is None:
+            return
+        self.settings_label.config(text='Event Settings: %s' % bot_event.event_type.value)
+        self.time_value = self.bot_event.time_interval
+        self.step_value = self.bot_event.speed_step
+        # time intercal entry input
+        if bot_event.has_time_interval:
+            self.time_input_frame.grid(column=0, row=1)
+        else:
+            self.time_input_frame.grid_forget()
+        # speed step radio buttons
+        if bot_event.has_speed_step:
+            self.step_input_frame.grid(column=0, row=2)
+        else:
+            self.step_input_frame.grid_forget()
 
     @property
     def time_value(self):
-        return self._time_value
+        return self.bot_event.time_interval
 
     @time_value.setter
     def time_value(self, time: int):
         if time < 1: time = 1
-        self._time_value = time
-        self.time_variable.set(f"{self._time_value} seconds")
+        # self._time_value = time
+        self.bot_event.time_interval = int(time)
+        self.time_variable.set(f"{self.time_value} seconds")
 
     @property
     def step_value(self):
-        return self._step_value
+        return self.bot_event.speed_step
 
     @step_value.setter
-    def step_value(self, step):
-        self._step_value = int(step)
-        if self.step_selection.get() != self._step_value:
-            self.step_selection.set(step)
+    def step_value(self, step: int):
+        self.bot_event.speed_step = int(step)
+        if str(self.step_selection.get()) != str(self.step_value):
+            self.step_selection.set(int(step))
 
     # called on RadioButton change
     def stepValueChange(self):
@@ -412,11 +511,16 @@ class EventSettingsFrame(ttk.Frame):
         self.time_value -= 1
 
     def saveButtonAction(self):
-        if self.show_time:
-            self.bot_event.time_interval = self.time_value
-        if self.show_step:
-            self.bot_event.speed_step = self.step_value
-        self.bot_event.createWidget()
+        # if self.show_time:
+        #     self.bot_event.time_interval = self.time_value
+        # if self.show_step:
+        #     self.bot_event.speed_step = self.step_value
+        # self.bot_event.createWidget()
+        # print(self.bot_event.time_interval, self.bot_event.speed_step)
+        if self.bot_event not in EVENTS_DATA:
+            EVENTS_DATA.append(self.bot_event)
+        self.bot_event.widget.render()
+
         APP_INST.showMainFrame()
 
     def cancelButtonAction(self):
@@ -523,7 +627,7 @@ class RobotSpeakSettingsFrame(ttk.Frame):
 #         APP_INST.active_view = RobotSpeakSettingsFrame(event_type=BotEventType.Speak)
 
 
-class BotEventSettingsFrame(ttk.Frame):
+class EventControlsSettingsFrame(ttk.Frame):
 
     title_label: ttk.Label
     # event_options_frame: ttk.Frame
@@ -550,8 +654,18 @@ class BotEventSettingsFrame(ttk.Frame):
         self.title_label.grid(column=0, row=0, pady=10)
         self.action_buttons_frame.grid(column=0, row=2, pady=10)
 
+    def newBotEventSettings(self, bot_event_type: BotEventType):
+        bot_event = BotEvent(event_type=bot_event_type)
+        if bot_event.has_event_settings:
+            APP_INST.frames['event_settings'].bot_event = bot_event
+            APP_INST.showFrame('event_settings')
+        else:
+            if bot_event not in EVENTS_DATA:
+                EVENTS_DATA.append(bot_event)
+            bot_event.widget.render()
+            APP_INST.showFrame('main')
 
-class HeadEventSettingsFrame(BotEventSettingsFrame):
+class HeadEventSettingsFrame(EventControlsSettingsFrame):
      # constructor
     def __init__(self, container):
         super().__init__(container)
@@ -560,7 +674,13 @@ class HeadEventSettingsFrame(BotEventSettingsFrame):
         self.action_buttons_frame = ArrowDirectionControlsFrame(self)
         self.action_buttons_frame.grid(column=0, row=1)
 
-class WaistEventSettingsFrame(BotEventSettingsFrame):
+        self.action_buttons_frame.up_button.config(command=lambda : self.newBotEventSettings(BotEventType.HeadUp))
+        self.action_buttons_frame.down_button.config(command=lambda : self.newBotEventSettings(BotEventType.HeadDown))
+        self.action_buttons_frame.left_button.config(command=lambda : self.newBotEventSettings(BotEventType.HeadLeft))
+        self.action_buttons_frame.right_button.config(command=lambda : self.newBotEventSettings(BotEventType.HeadRight))
+        self.action_buttons_frame.center_button.config(command=lambda : self.newBotEventSettings(BotEventType.HeadCenter))
+
+class WaistEventSettingsFrame(EventControlsSettingsFrame):
      # constructor
     def __init__(self, container):
         super().__init__(container)
@@ -572,8 +692,12 @@ class WaistEventSettingsFrame(BotEventSettingsFrame):
         self.action_buttons_frame.up_button.grid_forget()
         self.action_buttons_frame.down_button.grid_forget()
 
+        self.action_buttons_frame.left_button.config(command=lambda : self.newBotEventSettings(BotEventType.WaistLeft))
+        self.action_buttons_frame.right_button.config(command=lambda : self.newBotEventSettings(BotEventType.WaistRight))
+        self.action_buttons_frame.center_button.config(command=lambda : self.newBotEventSettings(BotEventType.WaistCenter))
 
-class WheelEventSettingsFrame(BotEventSettingsFrame):
+
+class WheelEventSettingsFrame(EventControlsSettingsFrame):
     # properties
     stop_image: ImageTk.PhotoImage
 
@@ -590,7 +714,13 @@ class WheelEventSettingsFrame(BotEventSettingsFrame):
         self.action_buttons_frame.center_button.config(command=lambda : print('Stop'))
         self.action_buttons_frame.center_button.config(image=self.stop_image)
 
-class SpeakEventSettingsFrame(BotEventSettingsFrame):
+        self.action_buttons_frame.up_button.config(command=lambda : self.newBotEventSettings(BotEventType.Forward))
+        self.action_buttons_frame.down_button.config(command=lambda : self.newBotEventSettings(BotEventType.Reverse))
+        self.action_buttons_frame.left_button.config(command=lambda : self.newBotEventSettings(BotEventType.TurnLeft))
+        self.action_buttons_frame.right_button.config(command=lambda : self.newBotEventSettings(BotEventType.TurnRight))
+        self.action_buttons_frame.center_button.config(command=lambda : self.newBotEventSettings(BotEventType.Stop))
+
+class SpeakEventSettingsFrame(EventControlsSettingsFrame):
      # constructor
     def __init__(self, container):
         super().__init__(container)
@@ -717,7 +847,7 @@ class MainFrame(ttk.Frame):
         global EVENTS_VIEW_PORT_FRAME
         EVENTS_VIEW_PORT_FRAME = self.viewPort
 
-        # renderEvents()
+        for event in EVENTS_DATA: event.widget.render()
 
         self.events_display.pack(side="left", fill="both", expand=True, padx=(0, 5), pady=5)
 
@@ -788,6 +918,7 @@ class TkinterApp(tk.Tk):
         self.frames['new_wheel_event'] = WheelEventSettingsFrame(self)
         self.frames['new_speak_event'] = SpeakEventSettingsFrame(self)
         # TODO - implement Speech2Text event settings frame
+        self.frames['event_settings'] = EventSettingsFrame(self)
         self.active_frame = self.frames['main']
         self.packActiveFrame()
 
@@ -805,11 +936,7 @@ class TkinterApp(tk.Tk):
         TANGO_BOT.stop()
 
     def showMainFrame(self):
-        pass
-        # self.active_view.pack_forget()
-        # self.active_view.destroy()
-        # self.main_frame.pack(expand=True, fill='both')
-        # self.active_view = self.main_frame
+        self.showFrame('main')
 
     def packActiveFrame(self):
         self.active_frame.pack(expand=True, fill='both')
@@ -865,72 +992,6 @@ class TkinterApp(tk.Tk):
         file_menu.add_separator()
         file_menu.add_command(label='Exit', command=self.stop)
 
-# def reRenderEventsDisplay():
-#     APP_INST.main_frame.events_frame.destroy()
-#     APP_INST.main_frame.events_frame = EventsFrame(APP_INST.main_frame)
-#     renderEvents()
-
-def renderEvents():
-    for event in EVENTS_DATA:
-        if event.widget is not None and isinstance(event.widget, BotEventFrame):
-            event.widget.destroy()
-        event.createWidget()
-
-# def cleanEvents():
-#     global EVENTS_DATA
-#     EVENTS_DATA = []
-#     reRenderEventsDisplay()
-
-def moveEventUp(event: BotEvent):
-    row = event.row
-    if row < 1: return
-    new_index = row - 1
-    EVENTS_DATA.remove(event)
-    EVENTS_DATA.insert(new_index, event)
-    renderEvents()
-
-def moveEventDown(event: BotEvent):
-    row = event.row
-    if len(EVENTS_DATA) - 1 <= row: return
-    new_index = row + 1
-    EVENTS_DATA.remove(event)
-    EVENTS_DATA.insert(new_index, event)
-    renderEvents()
-
-def deleteEvent(event: BotEvent):
-    event.widget.destroy()
-    EVENTS_DATA.remove(event)
-    renderEvents()
-
-def createEventSettingsFrame(bot_event: BotEvent = None, event_type: BotEventType = None, show_time: bool = False, show_step: bool = False):
-    global APP_INST
-    if bot_event is None and event_type is None:
-        log.error('Needs a bot_event or event_type - createEventSettingsFrame')
-    elif show_time is False and show_step is False:
-        bot_event = BotEvent(event_type=event_type)
-        return
-
-def makeEventCreateCallback(event_type: BotEventType):
-    global APP_INST
-    def fnc(event = None):
-        APP_INST.focus()
-        event = BotEvent(event_type=event_type)
-        event.createWidget()
-    return fnc
-
-def makeCreateWheelEventSettingsFrame(event_type: BotEventType):
-    bot_event = BotEvent(event_type=event_type)
-    show_time = False
-    show_step = False
-    if event_type is BotEventType.Forward or event_type is BotEventType.Reverse:
-        show_time = True
-        show_step = True
-    if event_type is BotEventType.TurnRight or event_type is BotEventType.TurnLeft:
-        show_step = True
-    global APP_INST
-    APP_INST.active_view.pack_forget()
-    APP_INST.active_view = EventSettingsFrame(bot_event=bot_event, show_time=show_time, show_step=show_step)
-
 def runEventsThreadFnc():
     print('Running Events...')
     global EVENTS_DATA
@@ -954,16 +1015,6 @@ def stopRobot():
     print('Stop Robot')
     global TANGO_BOT
     TANGO_BOT.stop()
-
-
-
-
-
-
-
-
-def createBotEvent(bot_event_type: BotEventType):
-    bot_event = BotEvent(event_type=bot_event_type)
 
 def fetchTkImage(file: str, size: int = 20, rotate: float = None, transpose = None):
     img = Image.open(file)
