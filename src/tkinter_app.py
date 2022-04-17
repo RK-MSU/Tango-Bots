@@ -389,22 +389,29 @@ class EventSettingsFrame(ttk.Frame):
     step_selection: tk.StringVar
     text_input: tk.Text
 
+    origianl_time_value: int
+    original_step_value: int
+
     # constructor
     def __init__(self, parent):
         super().__init__(parent)
+
+        self.columnconfigure(0, weight=1)
+
         self.time_variable = tk.StringVar()
         self.step_selection = tk.StringVar()
 
         self.settings_label = ttk.Label(self)
         self.settings_label.config(text='Event Settings')
-        self.settings_label.grid(column=0, row=0)
+        self.settings_label.config(font=('Helvetica', 16))
+        self.settings_label.grid(column=0, row=0, pady=10)
 
         # time entry
         self.time_input_frame = ttk.Frame(self)
         self.time_entry = tk.Entry(self.time_input_frame)
         self.time_entry.config(textvariable=self.time_variable)
         self.time_entry.config(justify='center')
-        self.time_entry.config(font=('Helvetica', 15))
+        self.time_entry.config(font=('Helvetica', 14))
         self.time_entry.config(state='disabled')
         self.time_entry.config(disabledbackground="white")
         self.time_entry.config(disabledforeground="black")
@@ -428,7 +435,7 @@ class EventSettingsFrame(ttk.Frame):
 
         # text input
         self.text_input_frame = ttk.Frame(self)
-        ttk.Label(self.text_input_frame, text='Input what you want the robot to say').pack()
+        ttk.Label(self.text_input_frame, text='Input what you want the robot to say').pack(pady=(0, 10))
         self.text_input = tk.Text(self.text_input_frame)
         self.text_input.config(height=5)
         self.text_input.pack()
@@ -437,7 +444,7 @@ class EventSettingsFrame(ttk.Frame):
         save_button = ttk.Button(self.settings_actions_frame, text='Save', command=self.saveButtonAction)
         cancel_button = ttk.Button(self.settings_actions_frame, text='Cancel', command=self.cancelButtonAction)
         save_button.grid(column=0, row=0)
-        # cancel_button.grid(column=1, row=0)
+        cancel_button.grid(column=1, row=0)
         self.settings_actions_frame.grid(column=0, row=10)
 
     @property
@@ -447,6 +454,8 @@ class EventSettingsFrame(ttk.Frame):
     @bot_event.setter
     def bot_event(self, bot_event: BotEvent):
         self.__bot_event = bot_event
+        self.origianl_time_value = bot_event.time_interval
+        self.original_step_value = bot_event.speed_step
         if bot_event is None:
             return
         self.settings_label.config(text='Event Settings: %s' % bot_event.event_type.value)
@@ -456,17 +465,17 @@ class EventSettingsFrame(ttk.Frame):
         self.text_input.insert('1.0', self.bot_event.speak_text)
         # time intercal entry input
         if bot_event.has_time_interval:
-            self.time_input_frame.grid(column=0, row=1)
+            self.time_input_frame.grid(column=0, row=1, pady=(0, 10))
         else:
             self.time_input_frame.grid_forget()
         # speed step radio buttons
         if bot_event.has_speed_step:
-            self.step_input_frame.grid(column=0, row=2)
+            self.step_input_frame.grid(column=0, row=2, pady=(0, 10))
         else:
             self.step_input_frame.grid_forget()
 
         if bot_event.has_speak_text:
-            self.text_input_frame.grid(column=0, row=3)
+            self.text_input_frame.grid(column=0, row=3, pady=(0, 10))
         else:
             self.text_input_frame.grid_forget()
 
@@ -508,6 +517,8 @@ class EventSettingsFrame(ttk.Frame):
         APP_INST.showMainFrame()
 
     def cancelButtonAction(self):
+        self.bot_event.time_interval = self.origianl_time_value
+        self.bot_event.speed_step = self.original_step_value
         APP_INST.showMainFrame()
 
 class EventControlsSettingsFrame(ttk.Frame):
