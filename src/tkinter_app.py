@@ -675,7 +675,7 @@ class MainFrame(ttk.Frame):
         # TODO - implement Speech2Text
         self.speech2text_button.config(command=lambda : print('Speech2Text'))
         # TODO - implement clear
-        self.clear_button.config(command=lambda : print('Clear'))
+        self.clear_button.config(command=lambda : self.clearEventsData())
 
         # pack buttons
         self.play_button.pack()
@@ -758,6 +758,12 @@ class MainFrame(ttk.Frame):
         bot_event = BotEvent(event_type=BotEventType.Speak)
         APP_INST.frames['event_settings'].bot_event = bot_event
         APP_INST.showFrame('event_settings')
+
+    def clearEventsData(self):
+        global EVENTS_DATA
+        for event in EVENTS_DATA:
+            event.widget.destroy()
+        EVENTS_DATA = list()
 
 class TkinterApp(tk.Tk):
     # properties
