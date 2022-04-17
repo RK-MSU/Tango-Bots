@@ -91,10 +91,7 @@ class BotEventFrame(ttk.Frame):
         self.step_level_details_label.config(anchor=tk.W)
         # self.step_level_details_label.pack(expand=True, fill='x')
         # Robot Speak Text
-        # if self.bot_event.speak_text is not None:
         self.speak_text_details_label = ttk.Label(self.details_frame)
-        self.speak_text_details_label.config(text="Text: \"%s\"" % self.bot_event.speak_text)
-        # self.speak_text_details_label.pack()
 
 
         # Event Commands
@@ -103,7 +100,6 @@ class BotEventFrame(ttk.Frame):
         self.delete_button.config(command=lambda : self.deleteBotEvent())
         self.edit_button = ttk.Button(self, text='edit')
         self.edit_button.config(command=lambda : self.editBotEvent())
-
 
 
         # Add items
@@ -147,6 +143,9 @@ class BotEventFrame(ttk.Frame):
         if self.bot_event.has_speed_step:
             self.step_level_details_label.config(text='Speed Level: %s' % self.bot_event.speed_step)
             self.step_level_details_label.pack()
+        if self.bot_event.has_speak_text:
+            self.speak_text_details_label.config(text="Text: \"%s\"" % self.bot_event.speak_text)
+            self.speak_text_details_label.pack()
 
         if self.bot_event.has_event_settings:
             self.edit_button.grid(column=3, row=1, sticky=tk.E)
@@ -186,7 +185,7 @@ class BotEvent:
     event_type: BotEventType
     __time_interval: int = 1
     __speed_step: int = 1
-    speak_text: str = None
+    __speak_text: str = ''
     widget: BotEventFrame = None
 
     # constructor
@@ -234,8 +233,14 @@ class BotEvent:
         return False
 
     @property
+    def has_speak_text(self):
+        if self.event_type is BotEventType.Speak:
+            return True
+        return False
+
+    @property
     def has_event_settings(self):
-        if self.has_time_interval or self.has_speed_step:
+        if self.has_time_interval or self.has_speed_step or self.has_speak_text:
             return True
         return False
 
@@ -256,6 +261,14 @@ class BotEvent:
     def speed_step(self, step):
         if step is not None:
             self.__speed_step = step
+
+    @property
+    def speak_text(self):
+        return self.__speak_text
+
+    @speak_text.setter
+    def speak_text(self, text: str):
+        self.__speak_text = text
 
     def createWidget(self):
         self.widget = BotEventFrame(bot_event=self)
@@ -368,20 +381,19 @@ class EventSettingsFrame(ttk.Frame):
     # properties
     __bot_event: BotEvent
     settings_label: ttk.Label
+    time_input_frame: ttk.Frame
+    step_input_frame: ttk.Frame
+    text_input_frame: ttk.Frame
+    settings_actions_frame: ttk.Frame
     time_variable: tk.StringVar
     step_selection: tk.StringVar
-    _time_value: int
-    _step_value: int
+    text_input: tk.Text
 
     # constructor
     def __init__(self, parent):
         super().__init__(parent)
         self.time_variable = tk.StringVar()
         self.step_selection = tk.StringVar()
-
-        # self.time_value = 1
-        # self.step_value = 1
-        # TODO - if bot_event.time_interval is not None?
 
         self.settings_label = ttk.Label(self)
         self.settings_label.config(text='Event Settings')
@@ -403,8 +415,6 @@ class EventSettingsFrame(ttk.Frame):
         self.time_entry.grid(column=0, row=0, rowspan=2, sticky=tk.NS)
         self.time_up_button.grid(column=1, row=0)
         self.time_down_button.grid(column=1, row=1)
-        # self.time_input_frame.grid(column=0, row=1)
-
 
         # step inputs
         self.step_input_frame = ttk.Frame(self)
@@ -415,15 +425,20 @@ class EventSettingsFrame(ttk.Frame):
         speed_one_option.pack(anchor='w')
         speed_two_option.pack(anchor='w')
         speed_three_option.pack(anchor='w')
-        # self.step_input_frame.grid(column=0, row=2)
 
+        # text input
+        self.text_input_frame = ttk.Frame(self)
+        ttk.Label(self.text_input_frame, text='Input what you want the robot to say').pack()
+        self.text_input = tk.Text(self.text_input_frame)
+        self.text_input.config(height=5)
+        self.text_input.pack()
 
         self.settings_actions_frame = ttk.Frame(self)
         save_button = ttk.Button(self.settings_actions_frame, text='Save', command=self.saveButtonAction)
         cancel_button = ttk.Button(self.settings_actions_frame, text='Cancel', command=self.cancelButtonAction)
         save_button.grid(column=0, row=0)
-        cancel_button.grid(column=1, row=0)
-        self.settings_actions_frame.grid(column=0, row=3)
+        # cancel_button.grid(column=1, row=0)
+        self.settings_actions_frame.grid(column=0, row=10)
 
     @property
     def bot_event(self):
@@ -437,6 +452,8 @@ class EventSettingsFrame(ttk.Frame):
         self.settings_label.config(text='Event Settings: %s' % bot_event.event_type.value)
         self.time_value = self.bot_event.time_interval
         self.step_value = self.bot_event.speed_step
+        self.text_input.delete('1.0', 'end')
+        self.text_input.insert('1.0', self.bot_event.speak_text)
         # time intercal entry input
         if bot_event.has_time_interval:
             self.time_input_frame.grid(column=0, row=1)
@@ -448,6 +465,11 @@ class EventSettingsFrame(ttk.Frame):
         else:
             self.step_input_frame.grid_forget()
 
+        if bot_event.has_speak_text:
+            self.text_input_frame.grid(column=0, row=3)
+        else:
+            self.text_input_frame.grid_forget()
+
     @property
     def time_value(self):
         return self.bot_event.time_interval
@@ -455,7 +477,6 @@ class EventSettingsFrame(ttk.Frame):
     @time_value.setter
     def time_value(self, time: int):
         if time < 1: time = 1
-        # self._time_value = time
         self.bot_event.time_interval = int(time)
         self.time_variable.set(f"{self.time_value} seconds")
 
@@ -480,16 +501,10 @@ class EventSettingsFrame(ttk.Frame):
         self.time_value -= 1
 
     def saveButtonAction(self):
-        # if self.show_time:
-        #     self.bot_event.time_interval = self.time_value
-        # if self.show_step:
-        #     self.bot_event.speed_step = self.step_value
-        # self.bot_event.createWidget()
-        # print(self.bot_event.time_interval, self.bot_event.speed_step)
+        self.bot_event.speak_text = self.text_input.get('1.0', 'end').strip()
         if self.bot_event not in EVENTS_DATA:
             EVENTS_DATA.append(self.bot_event)
         self.bot_event.widget.render()
-
         APP_INST.showMainFrame()
 
     def cancelButtonAction(self):
@@ -678,14 +693,6 @@ class MainFrame(ttk.Frame):
         # events display frame
         self.__buildEventsDisplay()
 
-        # self.toolbar_frame = ToolBarFrame(self)
-        # controls frame
-        # self.controls_frame = ControlsFrame(self)
-        # events frame
-        # self.events_frame = EventsFrame(self)
-
-        # self.pack(expand=True, fill='both')
-
     def __buildToolbar(self):
         self.toolbar_frame = ttk.Frame(self)
 
@@ -710,12 +717,11 @@ class MainFrame(ttk.Frame):
         self.head_button.config(command=lambda : APP_INST.showFrame('new_head_event'))
         self.waist_button.config(command=lambda : APP_INST.showFrame('new_waist_event'))
         self.wheels_button.config(command=lambda : APP_INST.showFrame('new_wheel_event'))
-        self.speak_button.config(command=lambda : APP_INST.showFrame('new_speak_event'))
+        self.speak_button.config(command=lambda : self.newSpeakBotEvent())
         # TODO - implement Speech2Text
         self.speech2text_button.config(command=lambda : print('Speech2Text'))
         # TODO - implement clear
         self.clear_button.config(command=lambda : print('Clear'))
-
 
         # pack buttons
         self.play_button.pack()
@@ -794,9 +800,10 @@ class MainFrame(ttk.Frame):
         else:
             self.canvas.unbind_all("<MouseWheel>")
 
-    def showNewEventFrame(self, bot_event_type: BotEventType):
-        global APP_INST
-        APP_INST.showFrame('new_event')
+    def newSpeakBotEvent(self):
+        bot_event = BotEvent(event_type=BotEventType.Speak)
+        APP_INST.frames['event_settings'].bot_event = bot_event
+        APP_INST.showFrame('event_settings')
 
 class TkinterApp(tk.Tk):
     # properties
