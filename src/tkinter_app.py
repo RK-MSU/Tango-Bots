@@ -12,7 +12,6 @@ from .tango_bot import TangBotController
 from .log import log
 from enum import Enum
 
-
 class BotEventType(Enum):
     HeadUp      = 'HEAD UP'
     HeadDown    = 'HEAD DOWN'
@@ -292,7 +291,6 @@ class BotEvent:
         elif self.event_type == BotEventType.Stop:
             TANGO_BOT.stop()
 
-
 class ToolBarFrame(ttk.Frame):
     # properties
     play_image_file = './assets/play.png'
@@ -365,35 +363,6 @@ class ArrowDirectionControlsFrame(ttk.Frame):
         self.left_arrow_image = fetchTkImage(self.arrow_image_file, transpose=Image.ROTATE_90)
         self.right_arrow_image = fetchTkImage(self.arrow_image_file, transpose=Image.ROTATE_270)
         self.center_image = fetchTkImage(self.center_image_file)
-
-# class HeadControlsFrame(ArrowDirectionControlsFrame):
-#     # constructor
-#     def __init__(self, container):
-#         super().__init__(container)
-#         self.up_button.config(command=lambda : print('Up'))
-#         self.grid(column=0, row=1)
-
-# class WaistControlsFrame(ArrowDirectionControlsFrame):
-#     # constructor
-#     def __init__(self, container):
-#         super().__init__(container)
-#         self.up_button.grid_forget()
-#         self.down_button.grid_forget()
-#         self.grid(column=0, row=1)
-
-# class WheelControlsFrame(ArrowDirectionControlsFrame):
-#     # properties
-#     stop_image: ImageTk.PhotoImage
-
-#     # constructor
-#     def __init__(self, container):
-#         super().__init__(container)
-
-#         self.stop_image = fetchTkImage('./assets/stop.png')
-#         self.center_button.config(command=lambda : print('Stop'))
-#         self.center_button.config(image=self.stop_image)
-
-#         self.grid(column=0, row=1)
 
 class EventSettingsFrame(ttk.Frame):
     # properties
@@ -569,64 +538,6 @@ class RobotSpeakSettingsFrame(ttk.Frame):
     def cancelButtonAction(self):
         APP_INST.showMainFrame()
 
-
-# class ControlsFrame(ttk.Frame):
-#     # properties
-#     head_controls_label_frame: ttk.LabelFrame
-#     waist_controls_label_frame: ttk.LabelFrame
-#     wheel_controls_label_frame: ttk.LabelFrame
-
-#     head_controls_frame: HeadControlsFrame
-#     waist_controls_frame: WaistControlsFrame
-#     wheel_controls_frame: WheelControlsFrame
-
-#     mic_image_file = './assets/mic.png'
-#     mic_image: ImageTk.PhotoImage
-#     mic_button: ttk.Button
-
-#     speaker_image_file = './assets/speaker.png'
-#     speaker_image: ImageTk.PhotoImage
-#     speak_button: ttk.Button
-
-#     # constructor
-#     def __init__(self, container):
-#         super().__init__(container)
-
-#         self.columnconfigure(0, weight=1)
-
-#         # init label frames
-#         self.head_controls_label_frame = ttk.LabelFrame(self, text='Head')
-#         self.waist_controls_label_frame = ttk.LabelFrame(self, text='Waist')
-#         self.wheel_controls_label_frame = ttk.LabelFrame(self, text='Wheels')
-
-#         self.head_controls_frame = HeadControlsFrame(self.head_controls_label_frame)
-#         self.waist_controls_frame = WaistControlsFrame(self.waist_controls_label_frame)
-#         self.wheel_controls_frame = WheelControlsFrame(self.wheel_controls_label_frame)
-
-#         self.head_controls_label_frame.grid(column=0, row=0, sticky=tk.EW)
-#         self.waist_controls_label_frame.grid(column=0, row=1, sticky=tk.EW, pady=10)
-#         self.wheel_controls_label_frame.grid(column=0, row=2, sticky=tk.EW)
-
-#         # TODO - speech2text command
-#         self.mic_image = fetchTkImage(self.mic_image_file, size=50)
-#         self.mic_button = ttk.Button(self, text='Speech2Text', image=self.mic_image, compound=tk.BOTTOM)
-#         self.mic_button.grid(column=0, row=3, sticky=tk.EW, pady=10)
-
-
-#         # TODO - speak command
-#         self.speaker_image = fetchTkImage(self.speaker_image_file, size=50)
-#         self.speak_button = ttk.Button(self, text='Speak', image=self.speaker_image, compound=tk.BOTTOM)
-#         self.speak_button.config(command=lambda : self.showSpeakSettings())
-#         self.speak_button.grid(column=0, row=4, sticky=tk.EW, pady=10)
-
-#         self.pack(side='left', fill='y', padx=10)
-
-#     def showSpeakSettings(self):
-#         global APP_INST
-#         APP_INST.active_view.pack_forget()
-#         APP_INST.active_view = RobotSpeakSettingsFrame(event_type=BotEventType.Speak)
-
-
 class EventControlsSettingsFrame(ttk.Frame):
 
     title_label: ttk.Label
@@ -696,7 +607,6 @@ class WaistEventSettingsFrame(EventControlsSettingsFrame):
         self.action_buttons_frame.right_button.config(command=lambda : self.newBotEventSettings(BotEventType.WaistRight))
         self.action_buttons_frame.center_button.config(command=lambda : self.newBotEventSettings(BotEventType.WaistCenter))
 
-
 class WheelEventSettingsFrame(EventControlsSettingsFrame):
     # properties
     stop_image: ImageTk.PhotoImage
@@ -733,7 +643,6 @@ class SpeakEventSettingsFrame(EventControlsSettingsFrame):
 
         self.text = tk.Text(self.action_buttons_frame, height=5)
         self.text.pack()
-
 
 class MainFrame(ttk.Frame):
     # toolbar properties
@@ -888,7 +797,6 @@ class MainFrame(ttk.Frame):
     def showNewEventFrame(self, bot_event_type: BotEventType):
         global APP_INST
         APP_INST.showFrame('new_event')
-
 
 class TkinterApp(tk.Tk):
     # properties
