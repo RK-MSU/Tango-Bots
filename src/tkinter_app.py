@@ -2,7 +2,7 @@
 
 import tkinter as tk
 from tkinter import ttk
-from tkinter.messagebox import showerror, showwarning, showinfo
+from tkinter.messagebox import showerror, showwarning, showinfo, askyesno
 from PIL import Image, ImageTk
 from typing import List
 import threading
@@ -79,20 +79,15 @@ class BotEventFrame(ttk.Frame):
         self.event_type_label.config(anchor=tk.W)
         self.event_type_label.pack(expand=True, fill='x')
         # time interval details
-        # if self.bot_event.time_interval is not None:
         self.time_details_label = ttk.Label(self.details_frame)
         self.time_details_label.config(text="Time: %s seconds" % self.bot_event.time_interval)
         self.time_details_label.config(anchor=tk.W)
-        # self.time_details_label.pack(expand=True, fill='x')
         # Speed (step) Level Label
-        # if self.bot_event.speed_step is not None:
         self.step_level_details_label = ttk.Label(self.details_frame)
         self.step_level_details_label.config(text='Speed Level: %s' % self.bot_event.speed_step)
         self.step_level_details_label.config(anchor=tk.W)
-        # self.step_level_details_label.pack(expand=True, fill='x')
         # Robot Speak Text
         self.speak_text_details_label = ttk.Label(self.details_frame)
-
 
         # Event Commands
         # ---------------------------------------
@@ -100,7 +95,6 @@ class BotEventFrame(ttk.Frame):
         self.delete_button.config(command=lambda : self.deleteBotEvent())
         self.edit_button = ttk.Button(self, text='edit')
         self.edit_button.config(command=lambda : self.editBotEvent())
-
 
         # Add items
         # ---------------------------------------
@@ -112,9 +106,6 @@ class BotEventFrame(ttk.Frame):
         self.edit_button.grid(column=3, row=1, sticky=tk.E)
 
         self.columnconfigure(3, weight=1)
-
-        # add self to parent
-        # self.grid(column=0, row=self.row, sticky=tk.EW, padx=5, pady=5)
 
     @property
     def row(self):
@@ -194,8 +185,6 @@ class BotEvent:
         self.time_interval = time_interval
         self.speed_step = speed_step
         self.widget = BotEventFrame(bot_event=self)
-        # global EVENTS_DATA
-        # EVENTS_DATA.append(self)
 
     @property
     def row(self):
@@ -303,31 +292,6 @@ class BotEvent:
             TANGO_BOT.turnRight()
         elif self.event_type == BotEventType.Stop:
             TANGO_BOT.stop()
-
-class ToolBarFrame(ttk.Frame):
-    # properties
-    play_image_file = './assets/play.png'
-    stop_image_file = './assets/stop.png'
-    play_image: ImageTk.PhotoImage
-    stop_image: ImageTk.PhotoImage
-    play_button: ttk.Button
-    stop_button: ttk.Button
-
-    # constructor
-    def __init__(self, container):
-        super().__init__(container)
-
-        self.play_image = fetchTkImage(self.play_image_file)
-        self.stop_image = fetchTkImage(self.stop_image_file)
-
-        self.play_button = ttk.Button(self, image=self.play_image, text='Play', compound=tk.LEFT, command=runEvents)
-        self.stop_button = ttk.Button(self, image=self.stop_image, text='Stop', compound=tk.LEFT, command=stopRobot)
-
-
-        self.play_button.pack(ipadx=5,expand=True, side='left')
-        self.stop_button.pack(ipadx=5,expand=True, side='left')
-
-        self.pack(padx=5)
 
 class ArrowDirectionControlsFrame(ttk.Frame):
     # properties
@@ -524,7 +488,6 @@ class EventSettingsFrame(ttk.Frame):
 class EventControlsSettingsFrame(ttk.Frame):
 
     title_label: ttk.Label
-    # event_options_frame: ttk.Frame
     action_buttons_frame: ttk.Frame
     save_button: ttk.Button
     cancel_button: ttk.Button
@@ -760,10 +723,12 @@ class MainFrame(ttk.Frame):
         APP_INST.showFrame('event_settings')
 
     def clearEventsData(self):
-        global EVENTS_DATA
-        for event in EVENTS_DATA:
-            event.widget.destroy()
-        EVENTS_DATA = list()
+        answer = askyesno(title='Delete Events',
+                    message='Are you sure that you want to clear all events?')
+        if answer:
+            global EVENTS_DATA
+            for event in EVENTS_DATA: event.widget.destroy()
+            EVENTS_DATA = list()
 
 class TkinterApp(tk.Tk):
     # properties
@@ -852,19 +817,6 @@ class TkinterApp(tk.Tk):
     def __protocolSetup(self):
         # make the top right close button
         self.protocol('WM_DELETE_WINDOW', self.stop)
-
-    def __menubarSetup(self):
-        self.menu_bar = tk.Menu(self, font=('Helvetica', 12))
-        self.config(menu=self.menu_bar)
-        # file_menu
-        file_menu = tk.Menu(self.menu_bar, tearoff=0, font=('Helvetica', 12))
-        # add the File menu to the menubar
-        self.menu_bar.add_cascade(label="File", menu=file_menu)
-        # add file_menu items
-        file_menu.add_command(label='Play', command=runEvents)
-        # file_menu.add_command(label='Clear', command=cleanEvents)
-        file_menu.add_separator()
-        file_menu.add_command(label='Exit', command=self.stop)
 
 def runEventsThreadFnc():
     print('Running Events...')
