@@ -288,9 +288,13 @@ class BotEvent:
         elif self.event_type == BotEventType.WaistRight:
             TANGO_BOT.moveWaistRight()
         elif self.event_type == BotEventType.Forward:
-            TANGO_BOT.increaseWheelSpeed()
+            TANGO_BOT.increaseWheelSpeed(speed_level=self.speed_step)
+            sleep(self.time_interval)
+            TANGO_BOT.stop()
         elif self.event_type == BotEventType.Reverse:
-            TANGO_BOT.decreaseWheelSpeed()
+            TANGO_BOT.decreaseWheelSpeed(speed_level=self.speed_step)
+            sleep(self.time_interval)
+            TANGO_BOT.stop()
         elif self.event_type == BotEventType.TurnLeft:
             TANGO_BOT.turnLeft()
         elif self.event_type == BotEventType.TurnRight:
@@ -850,18 +854,20 @@ def runEventsThreadFnc():
     RUN_EVENTS_THREAD = None
 
 def runEvents():
-    APP_INST.showFrame('running_events')
-    APP_INST.update_idletasks()
-    APP_INST.update()
-    pg_value = 0
-    while pg_value <= 100:
-        APP_INST.frames['running_events'].progressbar['value'] = pg_value
-        pg_value += 20
-        APP_INST.update_idletasks()
-        APP_INST.update()
-        sleep(0.5)
-    showinfo(message='Finished Running!')
-    APP_INST.showFrame('main')
+    for event in EVENTS_DATA:
+        event.execute()
+    # APP_INST.showFrame('running_events')
+    # APP_INST.update_idletasks()
+    # APP_INST.update()
+    # pg_value = 0
+    # while pg_value <= 100:
+    #     APP_INST.frames['running_events'].progressbar['value'] = pg_value
+    #     pg_value += 20
+    #     APP_INST.update_idletasks()
+    #     APP_INST.update()
+    #     sleep(0.5)
+    # showinfo(message='Finished Running!')
+    # APP_INST.showFrame('main')
     # global RUN_EVENTS_THREAD
     # if RUN_EVENTS_THREAD is not None:
     #     print('Already Running...')
