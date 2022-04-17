@@ -674,7 +674,6 @@ class MainFrame(ttk.Frame):
         self.speak_button.config(command=lambda : self.newSpeakBotEvent())
         # TODO - implement Speech2Text
         self.speech2text_button.config(command=lambda : print('Speech2Text'))
-        # TODO - implement clear
         self.clear_button.config(command=lambda : self.clearEventsData())
 
         # pack buttons
@@ -755,6 +754,7 @@ class MainFrame(ttk.Frame):
             self.canvas.unbind_all("<MouseWheel>")
 
     def newSpeakBotEvent(self):
+        global APP_INST
         bot_event = BotEvent(event_type=BotEventType.Speak)
         APP_INST.frames['event_settings'].bot_event = bot_event
         APP_INST.showFrame('event_settings')
