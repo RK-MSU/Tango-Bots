@@ -830,8 +830,8 @@ class TkinterApp(tk.Tk):
         # window size/position
         self.resizable(self.__RESIZEABLE_WIDTH, self.__RESIZEABLE_HEIGHT)
         # get the screen dimension
-        window_width = int(self.screen_width / 4)
-        window_height = int(self.screen_height / 2)
+        window_width = int(self.screen_width)
+        window_height = int(self.screen_height)
         # find the center point
         center_x = 0
         center_y = 0
