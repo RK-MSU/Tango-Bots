@@ -267,39 +267,61 @@ class BotEvent:
     def createWidget(self):
         self.widget = BotEventFrame(bot_event=self)
 
-    # TODO - implement speed step
-    # TODO - implement time_interval
     def execute(self):
+        default_sleep = 0.8
         # TODO - implement BotEventType.Speak
         if self.event_type == BotEventType.HeadUp:
+            log.debug("Executing BotEvent '%s'", 'Head Up')
             TANGO_BOT.moveHeadUp()
+            sleep(default_sleep)
         elif self.event_type == BotEventType.HeadDown:
+            log.debug("Executing BotEvent '%s'", 'Head Down')
             TANGO_BOT.moveHeadDown()
+            sleep(default_sleep)
         elif self.event_type == BotEventType.HeadLeft:
+            log.debug("Executing BotEvent '%s'", 'Head Left')
             TANGO_BOT.moveHeadLeft()
+            sleep(default_sleep)
         elif self.event_type == BotEventType.HeadRight:
+            log.debug("Executing BotEvent '%s'", 'Head Right')
             TANGO_BOT.moveHeadRight()
+            sleep(default_sleep)
         elif self.event_type == BotEventType.HeadCenter:
+            log.debug("Executing BotEvent '%s'", 'Head Center')
             TANGO_BOT.centerHead()
+            sleep(default_sleep)
         elif self.event_type == BotEventType.WaistCenter:
+            log.debug("Executing BotEvent '%s'", 'Waist Center')
             TANGO_BOT.centerWaist()
+            sleep(default_sleep)
         elif self.event_type == BotEventType.WaistLeft:
+            log.debug("Executing BotEvent '%s'", 'Waist Left')
             TANGO_BOT.moveWaistLeft()
+            sleep(default_sleep)
         elif self.event_type == BotEventType.WaistRight:
+            log.debug("Executing BotEvent '%s'", 'Waist Right')
             TANGO_BOT.moveWaistRight()
+            sleep(default_sleep)
         elif self.event_type == BotEventType.Forward:
+            log.debug("Executing BotEvent '%s'", 'Forward')
             TANGO_BOT.increaseWheelSpeed(speed_level=self.speed_step)
             sleep(self.time_interval)
             TANGO_BOT.stop()
         elif self.event_type == BotEventType.Reverse:
+            log.debug("Executing BotEvent '%s'", 'Reverse')
             TANGO_BOT.decreaseWheelSpeed(speed_level=self.speed_step)
             sleep(self.time_interval)
             TANGO_BOT.stop()
         elif self.event_type == BotEventType.TurnLeft:
+            log.debug("Executing BotEvent '%s'", 'Turn Left')
             TANGO_BOT.turnLeft()
+            sleep(default_sleep)
         elif self.event_type == BotEventType.TurnRight:
+            log.debug("Executing BotEvent '%s'", 'Turn Right')
             TANGO_BOT.turnRight()
+            sleep(default_sleep)
         elif self.event_type == BotEventType.Stop:
+            log.debug("Executing BotEvent '%s'", 'Stop')
             TANGO_BOT.stop()
 
 class ArrowDirectionControlsFrame(ttk.Frame):
