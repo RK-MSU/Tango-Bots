@@ -5,12 +5,35 @@ from tkinter import ttk
 from tkinter.messagebox import showerror, showwarning, showinfo, askyesno
 from PIL import Image, ImageTk
 from typing import List
-import threading
 import platform
 from time import sleep
 from .tango_bot import TangBotController
 from .log import log
 from enum import Enum
+import speech_recognition as sr
+import threading
+
+recognizer: sr.Recognizer = sr.Recognizer()
+microphone: sr.Microphone = sr.Microphone()
+
+PHRASE_BOT_DICT = {
+    'head up': 'moveHeadUp',
+    'head down': 'moveHeadDown',
+    'head left': 'moveHeadLeft',
+    'head right': 'moveHeadRight',
+    'head center': 'centerHead',
+    'body left': 'moveWaistLeft',
+    'body right': 'moveWaistRight',
+    'body center': 'centerWaist',
+    'forward': 'increaseWheelSpeed',
+    'reverse': 'decreaseWheelSpeed',
+    'turn left': 'turnLeft',
+    'turn right': 'turnRight',
+    'stop': 'stop',
+    # 'speed one': 'setSpeedLevelOne',
+    # 'speed two': 'setSpeedLevelTwo',
+    # 'speed three': 'setSpeedLevelThree',
+}
 
 class BotEventType(Enum):
     HeadUp      = 'HEAD UP'
@@ -669,7 +692,7 @@ class MainFrame(ttk.Frame):
         self.wheels_button.config(command=lambda : APP_INST.showFrame('new_wheel_event'))
         self.speak_button.config(command=lambda : self.newSpeakBotEvent())
         # TODO - implement Speech2Text
-        self.speech2text_button.config(command=lambda : print('Speech2Text'))
+        self.speech2text_button.config(command=lambda : self.newSpeechInputEvent())
         self.clear_button.config(command=lambda : self.clearEventsData())
 
         # pack buttons
@@ -755,6 +778,10 @@ class MainFrame(ttk.Frame):
         APP_INST.frames['event_settings'].bot_event = bot_event
         APP_INST.showFrame('event_settings')
 
+    def newSpeechInputEvent(self):
+        global APP_INST
+        APP_INST.showFrame('speech_input')
+
     def clearEventsData(self):
         answer = askyesno(title='Delete Events',
                     message='Are you sure that you want to clear all events?')
@@ -771,11 +798,158 @@ class RunningEventsProgressFrame(ttk.Frame):
     def __init__(self, container):
         super().__init__(container)
 
+        ttk.Label(self, text='Progress').pack(pady=10)
         self.progressbar = ttk.Progressbar(self, orient='horizontal', mode='determinate', length=300)
-        self.progressbar.pack()
+        self.progressbar.pack(pady=10)
 
-        self.stop_button = ttk.Button(self, text='Stop', command= lambda : APP_INST.showFrame('main'))
-        self.stop_button.pack()
+        self.stop_button = ttk.Button(self, text='Stop', command= lambda : self.stopRunningEvents())
+        self.stop_button.pack(pady=10)
+
+    def stopRunningEvents(self):
+        global EVENTS_RUNNING
+        EVENTS_RUNNING = False
+
+class SpeechInputFrame(ttk.Frame):
+    # constructor
+    def __init__(self, container):
+        super().__init__(container)
+
+        ttk.Label(self, text='Speech Input', font=('Helvetica', 16)).pack()
+
+        self.phrases_frame = ttk.Frame(self)
+
+        for phrase in PHRASE_BOT_DICT.keys():
+            ttk.Label(self.phrases_frame, text=f"\"{phrase}\"").pack()
+
+        self.phrases_frame.pack()
+
+        self.listening_label = ttk.Label(self, text='Listening...', font=('Helvetica', 16))
+        # self.listening_label.pack()
+
+        self.listen_button = ttk.Button(self, text='Listen', command=lambda : self.listen())
+        self.cancel_button = ttk.Button(self, text='Cancel', command=lambda : self.cancel())
+
+        self.listen_button.pack()
+        self.cancel_button.pack()
+
+    def cancel(self):
+        global APP_INST
+        APP_INST.showFrame('main')
+
+        self.listening_label.pack_forget()
+        self.phrases_frame.pack_forget()
+        self.listen_button.pack_forget()
+        self.cancel_button.pack_forget()
+
+        self.listening_label.config(text=f"Listening...")
+
+        self.phrases_frame.pack()
+        self.listen_button.pack()
+        self.cancel_button.pack()
+
+    def listen(self):
+
+        global APP_INST
+
+        self.listening_label.pack_forget()
+        self.phrases_frame.pack_forget()
+        self.listen_button.pack_forget()
+        self.cancel_button.pack_forget()
+
+        self.listening_label.config(text=f"Listening...")
+
+        self.listening_label.pack()
+        # self.listen_button.pack()
+        # self.cancel_button.pack()
+
+
+
+
+        transcription: str = self.recognize_speech_from_mic()
+        if transcription is None:
+            return
+        log.info("Transcription: %s", transcription)
+        transcription = transcription.lower()
+        print("Converted: ", transcription)
+
+        if transcription not in PHRASE_BOT_DICT.keys():
+            self.listening_label.config(text=f"Invalid Phrase: \"{transcription}\"")
+            self.phrases_frame.pack_forget()
+            self.listen_button.pack_forget()
+            self.cancel_button.pack_forget()
+            self.phrases_frame.pack()
+            self.listen_button.pack()
+            self.cancel_button.pack()
+            return
+
+
+        bot_event: BotEvent = None
+        if transcription == 'head up':
+            bot_event = BotEvent(event_type=BotEventType.HeadUp)
+        elif transcription == 'head down':
+            bot_event = BotEvent(event_type=BotEventType.HeadDown)
+        elif transcription == 'head left':
+            bot_event = BotEvent(event_type=BotEventType.HeadLeft)
+        elif transcription == 'head right':
+            bot_event = BotEvent(event_type=BotEventType.HeadRight)
+        elif transcription == 'head center':
+            bot_event = BotEvent(event_type=BotEventType.HeadCenter)
+        elif transcription == 'body left':
+            bot_event = BotEvent(event_type=BotEventType.WaistLeft)
+        elif transcription == 'body right':
+            bot_event = BotEvent(event_type=BotEventType.WaistRight)
+        elif transcription == 'body center':
+            bot_event = BotEvent(event_type=BotEventType.WaistCenter)
+        elif transcription == 'forward':
+            bot_event = BotEvent(event_type=BotEventType.Forward)
+        elif transcription == 'reverse':
+            bot_event = BotEvent(event_type=BotEventType.Reverse)
+        elif transcription == 'turn left':
+            bot_event = BotEvent(event_type=BotEventType.TurnLeft)
+        elif transcription == 'turn right':
+            bot_event = BotEvent(event_type=BotEventType.TurnRight)
+        elif transcription == 'stop':
+            bot_event = BotEvent(event_type=BotEventType.Stop)
+
+        APP_INST.frames['event_settings'].bot_event = bot_event
+        APP_INST.showFrame('event_settings')
+
+
+
+
+    def recognize_speech_from_mic(self):
+        global APP_INST
+
+        # check that recognizer and microphone arguments are appropriate type
+        if not isinstance(recognizer, sr.Recognizer):
+            raise TypeError("`recognizer` must be `Recognizer` instance")
+
+        if not isinstance(microphone, sr.Microphone):
+            raise TypeError("`microphone` must be `Microphone` instance")
+        # adjust the recognizer sensitivity to ambient noise and record audio
+        # from the microphone
+        try:
+            with microphone as source:
+                recognizer.adjust_for_ambient_noise(source, 0.5)
+                APP_INST.update_idletasks()
+                APP_INST.update()
+                print("Listening...")
+                audio = recognizer.listen(source, timeout=5, phrase_time_limit=2)
+        except sr.WaitTimeoutError:
+            return None
+        # try recognizing the speech in the recording
+        # if a RequestError or UnknownValueError exception is caught
+        transcription = None
+        try:
+            transcription = recognizer.recognize_google(audio)
+            print(transcription)
+        except sr.RequestError as err:
+            # API was unreachable or unresponsive
+            print("API was unreachable or unresponsive.\n", err)
+        except sr.UnknownValueError as err:
+            # speech was unintelligible
+            print("Unknown word")
+        return transcription
 
 class TkinterApp(tk.Tk):
     # properties
@@ -803,9 +977,9 @@ class TkinterApp(tk.Tk):
         self.frames['new_head_event'] = HeadEventSettingsFrame(self)
         self.frames['new_waist_event'] = WaistEventSettingsFrame(self)
         self.frames['new_wheel_event'] = WheelEventSettingsFrame(self)
-        # TODO - implement Speech2Text event settings frame
         self.frames['event_settings'] = EventSettingsFrame(self)
         self.frames['running_events'] = RunningEventsProgressFrame(self)
+        self.frames['speech_input'] = SpeechInputFrame(self)
         self.active_frame = self.frames['main']
         self.packActiveFrame()
 
@@ -879,26 +1053,43 @@ def runEventsThreadFnc():
     RUN_EVENTS_THREAD = None
 
 def runEvents():
+
+    global APP_INST
+    global EVENTS_RUNNING
+
+    APP_INST.showFrame('running_events')
+    APP_INST.update_idletasks()
+    APP_INST.update()
+
+    EVENTS_RUNNING = True
+
+    progress_value = 0
+    progress_step_size = 100 / len(EVENTS_DATA)
+    events_completed = 0
+
+    log.debug('Running Events')
+
     for event in EVENTS_DATA:
+        if EVENTS_RUNNING is False:
+            log.debug('Stopped Running Events')
+            break
+        events_completed += 1
+        progress_value = events_completed * progress_step_size
+        APP_INST.frames['running_events'].progressbar['value'] = progress_value
+        APP_INST.update_idletasks()
+        APP_INST.update()
         event.execute()
-    # APP_INST.showFrame('running_events')
-    # APP_INST.update_idletasks()
-    # APP_INST.update()
-    # pg_value = 0
-    # while pg_value <= 100:
-    #     APP_INST.frames['running_events'].progressbar['value'] = pg_value
-    #     pg_value += 20
-    #     APP_INST.update_idletasks()
-    #     APP_INST.update()
-    #     sleep(0.5)
-    # showinfo(message='Finished Running!')
-    # APP_INST.showFrame('main')
-    # global RUN_EVENTS_THREAD
-    # if RUN_EVENTS_THREAD is not None:
-    #     print('Already Running...')
-    #     return
-    # RUN_EVENTS_THREAD = threading.Thread(target=runEventsThreadFnc, daemon=True)
-    # RUN_EVENTS_THREAD.start()
+
+    log.debug('Finished Running Events, stopping robot and centering')
+    # stop the robot
+    TANGO_BOT.stop()
+    TANGO_BOT.centerHead()
+    TANGO_BOT.centerWaist()
+    log.debug('Finished Running Events')
+    showinfo(message='Finished Running!')
+    EVENTS_RUNNING = False
+    APP_INST.showFrame('main')
+
 
 def stopRobot():
     print('Stop Robot')
@@ -919,7 +1110,7 @@ APP_INST: TkinterApp = None
 TANGO_BOT: TangBotController = TangBotController()
 EVENTS_VIEW_PORT_FRAME = None
 EVENTS_DATA: List[BotEvent] = list()
-RUN_EVENTS_THREAD: threading.Thread = None
+EVENTS_RUNNING: bool = False
 
 def run_app():
     global APP_INST
