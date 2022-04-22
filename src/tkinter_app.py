@@ -270,6 +270,9 @@ class BotEvent:
     def execute(self):
         default_sleep = 0.8
         # TODO - implement BotEventType.Speak
+        if self.event_type == BotEventType.Speak:
+            log.debug("Executing BotEvent '%s' - text: '%s'", 'Speak', self.speak_text)
+            TANGO_BOT.speak(text=self.speak_text)
         if self.event_type == BotEventType.HeadUp:
             log.debug("Executing BotEvent '%s'", 'Head Up')
             TANGO_BOT.moveHeadUp()

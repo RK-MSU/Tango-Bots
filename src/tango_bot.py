@@ -6,6 +6,15 @@ from .usb import serial
 from .usb import getUSB
 from enum import Enum
 from time import sleep
+import pyttsx3
+
+
+engine = pyttsx3.init()
+# getting details of current voice
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[10].id)
+engine.setProperty('rate', 150)
+
 
 class BotServos(Enum):
     WheelTogether = 0x00
@@ -168,6 +177,9 @@ class TangBotController:
         self.WHEEL_SPEED = self.TARGET_CENTER
         self.writeCmd(BotServos.WheelTogether, self.WHEEL_SPEED)
 
+    def speak(self, text):
+        engine.say(text)
+        engine.runAndWait()
 
     def setSpeed(self, speed: int):
         self.SPEED = speed
