@@ -11,7 +11,6 @@ from .tango_bot import TangBotController
 from .log import log
 from enum import Enum
 import speech_recognition as sr
-import threading
 
 recognizer: sr.Recognizer = sr.Recognizer()
 microphone: sr.Microphone = sr.Microphone()
