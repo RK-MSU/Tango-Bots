@@ -22,40 +22,179 @@ microphone: sr.Microphone = sr.Microphone()
 # Game 1 data
 GAME_1_DATA = {
     1: {
-        'position': (1, 2),
-        'neighbors': set([3])
+        'position': (0, 4),
+        'neighbors': set([2])
     },
     2: {
-        'position': (0, 1),
-        'neighbors': set([3]),
+        'position': (1, 4),
+        'neighbors': set([1, 3]),
         'event': {
-            'type': 'box',
-            'num': 1,
-            'open_event': 'game_over'
+            'type': 'box'
         }
     },
     3: {
-        'position': (1, 1),
-        'neighbors': set([1, 2, 4, 5]),
+        'position': (2, 4),
+        'neighbors': set([2, 8]),
         'event': {
             'type': 'battle'
         }
     },
     4: {
-        'position': (2, 1),
-        'neighbors': set([3]),
+        'position': (3, 4),
+        'neighbors': set([5]),
         'event': {
-            'type': 'battle',
-            'key': 1
+            'type': 'battle'
         }
     },
     5: {
-        'position': (1, 0),
+        'position': (4, 4),
+        'neighbors': set([4, 10]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    6: {
+        'position': (0, 3),
+        'neighbors': set([7, 11]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    7: {
+        'position': (1, 3),
+        'neighbors': set([2, 6, 12]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    8: {
+        'position': (2, 3),
         'neighbors': set([3]),
         'event': {
-            'type': 'restore_health',
+            'type': 'restore_health'
+        }
+    },
+    9: {
+        'position': (3, 3),
+        'neighbors': set([10, 14]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    10: {
+        'position': (4, 3),
+        'neighbors': set([5, 9, 15]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    11: {
+        'position': (0, 2),
+        'neighbors': set([6, 16]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    12: {
+        'position': (1, 2),
+        'neighbors': set([7, 13]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    13: {
+        'position': (2, 2),
+        'neighbors': set([12, 14]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    14: {
+        'position': (3, 2),
+        'neighbors': set([9, 13, 19]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    15: {
+        'position': (4, 2),
+        'neighbors': set([10, 20]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    16: {
+        'position': (0, 1),
+        'neighbors': set([11, 17]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    17: {
+        'position': (1, 1),
+        'neighbors': set([16, 22]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    18: {
+        'position': (2, 1),
+        'neighbors': set([23]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    19: {
+        'position': (3, 1),
+        'neighbors': set([14, 20, 24]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    20: {
+        'position': (4, 1),
+        'neighbors': set([15, 19]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    21: {
+        'position': (0, 0),
+        'neighbors': set([22]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    22: {
+        'position': (1, 0),
+        'neighbors': set([21, 23]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    23: {
+        'position': (2, 0),
+        'neighbors': set([18, 22]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    24: {
+        'position': (3, 0),
+        'neighbors': set([19, 25]),
+        'event': {
+            'type': 'restore_health'
+        }
+    },
+    25: {
+        'position': (4, 0),
+        'neighbors': set([24]),
+        'event': {
+            'type': 'restore_health'
         }
     }
+    
+
 }
 
 """Position Class
